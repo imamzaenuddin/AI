@@ -48,3 +48,4 @@ if [[ "${DAY_OF_WEEK}" == "7" || "${1:-}" == "--weekly" ]]; then
 fi
 
 echo "[$(date -Iseconds)] Backup host AI-V1 selesai."
+
