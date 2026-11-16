@@ -38,6 +38,8 @@ curl -s http://127.0.0.1:9120/health
 sudo apt-get install -y apache2-utils
 sudo mkdir -p /etc/nginx/htpasswd
 sudo htpasswd -c /etc/nginx/htpasswd/monitor.htpasswd admin
+sudo chown root:www-data /etc/nginx/htpasswd/monitor.htpasswd
+sudo chmod 640 /etc/nginx/htpasswd/monitor.htpasswd
 
 # Pasang virtual host Nginx (ganti <DOMAIN> dengan domain Anda)
 sudo cp /opt/vps-dashboard/deploy/nginx-monitor.conf /etc/nginx/sites-available/vps-monitor

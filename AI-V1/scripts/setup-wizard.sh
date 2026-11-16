@@ -205,6 +205,7 @@ chmod 600 "${TARGET_CODE_DIR}/config.yaml"
 # 6. Buat monitor.htpasswd jika htpasswd tersedia
 if command -v htpasswd >/dev/null 2>&1 && [[ -n "${MON_PASS}" ]]; then
   htpasswd -bc "${TARGET_HTPASSWD_DIR}/monitor.htpasswd" "${MON_USER}" "${MON_PASS}" >/dev/null 2>&1
+  chown root:www-data "${TARGET_HTPASSWD_DIR}/monitor.htpasswd" 2>/dev/null || true
   chmod 640 "${TARGET_HTPASSWD_DIR}/monitor.htpasswd"
 fi
 
