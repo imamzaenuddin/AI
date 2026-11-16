@@ -359,6 +359,7 @@ Untuk memantau secara visual apa saja yang sudah terinstall dan berjalan di VPS 
 ## 12. Code-Server (`/home/project`) & Wizard Migrasi (`scripts/`)
 
 * **VS Code di Browser (`code.<DOMAIN>`):** Gunakan [`code-server/`](./code-server/README.md) (`127.0.0.1:8443`) dengan user non-root `codeserver` yang langsung membuka `/home/project` sementara seluruh config/ekstensi tersimpan rapi di `/opt/code-server/`.
+* **Step-by-Step Setup & Credentials Wizard:** Jalankan [`scripts/setup-wizard.sh`](./scripts/setup-wizard.sh) (`--dry-run` untuk simulasi) guna mengisi IP VPS, domain, token Telegram PM, info `9Router`, DB non-root, serta otomatis mengenkripsi brankas PM (`pm-vault.enc`) dari template di [`templates/`](./templates/docker-compose.yml.example).
 * **Wizard Domain & Project Existing:** Gunakan [`scripts/migration-wizard.sh`](./scripts/migration-wizard.sh) saat migrasi/rebuild untuk memetakan domain, layanan inti (`hermes`, `monitor`, `code`), serta seluruh project web existing dan membuat virtual host Nginx bersih secara interaktif.
 
 

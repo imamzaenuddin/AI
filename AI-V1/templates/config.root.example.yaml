@@ -1,0 +1,38 @@
+# Template Konfigurasi Root Hermes (/opt/hermes/data/config.yaml)
+# Pastikan `key_env: NINEROUTER_API_KEY` selalu terpasang dan `dashboard.basic_auth` aktif.
+
+model:
+  default: <NAMA_MODEL_COMBO>
+  provider: custom-http
+  base_url: http://host.docker.internal:20128/v1
+  context_length: 128000
+
+providers:
+  custom-http:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+    models:
+      <NAMA_MODEL_COMBO>:
+        context_length: 128000
+  ninerouter:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+
+platforms:
+  telegram:
+    enabled: true
+
+gateway:
+  multiplex_profiles: true
+
+dashboard:
+  public_url: https://hermes.<DOMAIN>
+  basic_auth:
+    enabled: true
+    username: <ADMIN_DASHBOARD_USER>
+    password_hash: <STRONG_PASSWORD_HASH>
+
+paths:
+  data_dir: /opt/data
+  workspace_dir: /workspace
+  desktop_plugins_dir: /opt/data/desktop-plugins

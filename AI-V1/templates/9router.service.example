@@ -1,0 +1,19 @@
+[Unit]
+Description=9Router AI Gateway Primary (:20128)
+After=network.target
+
+[Service]
+Type=simple
+User=9router
+Group=9router
+WorkingDirectory=/opt/9router
+Environment=PORT=20128
+Environment=HOST=0.0.0.0
+ExecStart=/usr/bin/9router
+Restart=on-failure
+RestartSec=5
+MemoryHigh=1300M
+MemoryMax=1600M
+
+[Install]
+WantedBy=multi-user.target

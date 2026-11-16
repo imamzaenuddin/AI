@@ -29,8 +29,12 @@ else
 fi
 
 VAULT_FILE="${PM_VAULT_FILE:-${VAULT_DIR}/pm-vault.enc}"
-TMP_DIR="/dev/shm"
-[[ -d "${TMP_DIR}" && -w "${TMP_DIR}" ]] || TMP_DIR="/tmp"
+make_secure_tmp() {
+  if [[ -d "/dev/shm" ]] && mktemp "/dev/shm/pm-vault.XXXXXX" 2>/dev/null; then
+    return 0
+  fi
+  mktemp "/tmp/pm-vault.XXXXXX"
+}
 
 secure_delete() {
   local f="$1"
@@ -60,7 +64,7 @@ cmd_init() {
   chmod 700 "$(dirname "${VAULT_FILE}")"
 
   local tmp_plain
-  tmp_plain="$(mktemp "${TMP_DIR}/pm-vault.XXXXXX")"
+  tmp_plain="$(make_secure_tmp)"
   chmod 600 "${tmp_plain}"
   trap 'secure_delete "'"${tmp_plain}"'"' EXIT
 
@@ -104,7 +108,7 @@ cmd_edit() {
   fi
 
   local tmp_plain
-  tmp_plain="$(mktemp "${TMP_DIR}/pm-vault.XXXXXX")"
+  tmp_plain="$(make_secure_tmp)"
   chmod 600 "${tmp_plain}"
   trap 'secure_delete "'"${tmp_plain}"'"' EXIT
 
