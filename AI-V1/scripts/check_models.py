@@ -38,7 +38,23 @@ DATA_DIR = detect_data_dir()
 PROFILES_DIR = DATA_DIR / "profiles"
 REPORTS_DIR = DATA_DIR / "shared" / "reports"
 NINEROUTER_URL = os.environ.get("NINEROUTER_API_URL", "http://host.docker.internal:20128/v1").rstrip("/")
-NINEROUTER_API_KEY = os.environ.get("NINEROUTER_API_KEY", "")
+
+
+def load_ninerouter_key() -> str:
+    """Ambil NINEROUTER_API_KEY dari env atau fallback baca key tersebut dari DATA_DIR/.env."""
+    key = os.environ.get("NINEROUTER_API_KEY", "").strip()
+    if key:
+        return key
+    env_file = DATA_DIR / ".env"
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = line.strip()
+            if line.startswith("NINEROUTER_API_KEY="):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return ""
+
+
+NINEROUTER_API_KEY = load_ninerouter_key()
 OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
 
 

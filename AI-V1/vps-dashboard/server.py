@@ -285,7 +285,8 @@ def get_hermes_status() -> dict[str, Any]:
         env_mode = oct(stat.S_IMODE(st.st_mode))
         env_uid = st.st_uid
 
-    office3d_dir = HERMES_DATA_DIR / "desktop-plugins" / "office-3d"
+    office3d_dir = HERMES_DATA_DIR / "plugins" / "office-3d"
+    office3d_alt = HERMES_DATA_DIR / "desktop-plugins" / "office-3d"
     profiles_dir = HERMES_DATA_DIR / "profiles"
     profiles: list[dict[str, Any]] = []
     for profile_id, role, expected_tg in EXPECTED_PROFILES:
@@ -308,7 +309,7 @@ def get_hermes_status() -> dict[str, Any]:
         "env_mode": env_mode,
         "env_uid": env_uid,
         "gateway_sock_exists": (HERMES_DATA_DIR / "gateway.sock").exists(),
-        "office_3d_installed": office3d_dir.exists(),
+        "office_3d_installed": office3d_dir.exists() or office3d_alt.exists(),
         "credentials_dir_exists": (HERMES_DATA_DIR / "credentials").exists(),
         "pm_vault_exists": (HERMES_DATA_DIR / "credentials" / "pm-vault.enc").exists(),
         "profiles": profiles,
