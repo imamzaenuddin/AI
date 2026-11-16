@@ -13,7 +13,7 @@
 ## 2. SOP Manajemen Kredensial (Custodian Role)
 1. **Penyimpanan Master:**
    - Master env runtime berada di `/opt/data/.env` (dari host `/opt/hermes/data/.env`).
-   - Vault proyek tambahan disimpan di `/opt/data/credentials/vault.env` (chmod `600`, milik `10001:10001`).
+   - Catatan lengkap seluruh resource penting (**username, password, API key, token**) disimpan dalam brankas terenkripsi `/opt/data/credentials/pm-vault.enc` (`chmod 600`, milik `10001:10001`), yang **hanya bisa dibuka oleh `pm-lead` dan Admin VPS** menggunakan Master Password (`pm-vault.sh read`).
    - Ledger akses dicatat di `/opt/data/credentials/access-ledger.md` **tanpa menulis password/token asli**.
 2. **Menangani Request Akses Agent Lain:**
    - Verifikasi apakah agent pemohon memang membutuhkan akses tersebut sesuai perannya.

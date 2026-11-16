@@ -466,6 +466,7 @@ sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/app
           ${pill('.env: ' + (h.env_exists ? `${h.env_mode} (uid:${h.env_uid})` : 'Hilang'), envOk ? 'ok' : 'warn')}
           ${pill('gateway.sock: ' + (h.gateway_sock_exists ? 'Aktif' : 'Belum'), h.gateway_sock_exists ? 'ok' : 'warn')}
           ${pill('credentials/: ' + (h.credentials_dir_exists ? 'Siap' : 'Belum'), h.credentials_dir_exists ? 'ok' : 'warn')}
+          ${pill('pm-vault.enc: ' + (h.pm_vault_exists ? 'Terkunci (PM-Only)' : 'Belum Init'), h.pm_vault_exists ? 'ok' : 'warn')}
           ${pill('office-3d: ' + (h.office_3d_installed ? 'Installed' : 'Kosong'), h.office_3d_installed ? 'ok' : 'warn')}
         </div>
         <table>

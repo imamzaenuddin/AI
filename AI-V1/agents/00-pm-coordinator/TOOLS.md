@@ -4,7 +4,7 @@
 | Path Container | Mode | Fungsi |
 | :--- | :--- | :--- |
 | `/opt/data/.env` | `rw` (`600`) | Kredensial gateway utama (`TELEGRAM_BOT_TOKEN`, `NINEROUTER_API_KEY`, dll.) |
-| `/opt/data/credentials/` | `rw` (`700`) | Vault kredensial proyek & `access-ledger.md` |
+| `/opt/data/credentials/` | `rw` (`700`) | Brankas terenkripsi `pm-vault.enc` (`chmod 600`, butuh Master Password) & `access-ledger.md` |
 | `/opt/data/shared/tasks/` | `rw` | Master task board & tiket lintas tim |
 | `/opt/data/shared/reports/` | `rw` | Kumpulan laporan harian/mingguan Ops & Dev |
 | `/opt/data/profiles/` | `rw` | Konfigurasi & memori profil agent `ops-*` dan `dev-*` |

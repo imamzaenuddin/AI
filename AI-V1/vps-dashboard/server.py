@@ -309,6 +309,7 @@ def get_hermes_status() -> dict[str, Any]:
         "gateway_sock_exists": (HERMES_DATA_DIR / "gateway.sock").exists(),
         "office_3d_installed": office3d_dir.exists(),
         "credentials_dir_exists": (HERMES_DATA_DIR / "credentials").exists(),
+        "pm_vault_exists": (HERMES_DATA_DIR / "credentials" / "pm-vault.enc").exists(),
         "profiles": profiles,
     }
 

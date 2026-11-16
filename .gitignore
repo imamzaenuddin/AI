@@ -8,6 +8,13 @@
 *.p12
 auth.json
 *.htpasswd
+*.enc
+pm-vault*
+!pm-vault.sh
+vault.env
+vault.json
+vault.md
+!vault.example.*
 
 # Runtime / DB / Backups
 *.db
