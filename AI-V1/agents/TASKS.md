@@ -8,6 +8,8 @@ Dokumen ini menjadi panduan tugas awal (*bootstrap*), tugas operasional rutin, d
 
 ## Fase 1 — Bootstrap & Verifikasi Infrastruktur Awal (Sekali Saat Setup)
 
+> **Catatan VPS Existing:** Jika diimplementasikan pada VPS yang sudah memiliki aplikasi web/DB/Hermes aktif, Admin wajib menyelesaikan **Fase 0 & Fase 1** di [`../MIGRATION_EXISTING_VPS.md`](../MIGRATION_EXISTING_VPS.md) (backup DB, web, Nginx, SSL, & data Hermes lama) sebelum `BOOT-01`.
+
 | ID | Tugas | PIC Agent | Dependensi | Definisi Selesai (DoD) | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `BOOT-01` | Verifikasi seluruh profil agent terpasang di `/opt/data/profiles/` dengan `UID 10001` dan `telegram.enabled: false` kecuali `pm-lead` | `pm-lead` | Setup container Hermes | Semua folder profil terbaca, nol konflik `getUpdates` di log gateway | `[ ]` |

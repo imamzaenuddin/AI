@@ -61,6 +61,9 @@ flowchart LR
 
 ## 3. Breakdown Setup Bagian 1 — Hardening VPS Host
 
+> **Penting — Jika VPS Sudah Memiliki Data Existing (Web/DB/Hermes Aktif):**
+> **Wajib** lakukan backup penuh dan ikuti aturan penanganan data existing di [`MIGRATION_EXISTING_VPS.md`](./MIGRATION_EXISTING_VPS.md) terlebih dahulu sebelum menjalankan langkah-langkah di bawah ini (jangan langsung `chown -R` pada folder web live atau menyalakan container sebelum service Telegram lama dimatikan).
+
 Lakukan pada VPS baru atau VPS aktif (`Ubuntu 24.04 LTS` disarankan, minimal `2 vCPU / 4 GB RAM / 60 GB SSD`):
 
 1. **Akses SSH Key-Only (Nonaktifkan Login Password)**
