@@ -49,3 +49,4 @@ sudo certbot --nginx -d monitor.domain-anda.id --redirect
 ```
 
 Setelah selesai, buka `https://monitor.domain-anda.id` dan login dengan username/password `htpasswd` yang sudah dibuat.
+
