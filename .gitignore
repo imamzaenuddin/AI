@@ -1,0 +1,29 @@
+# Secrets & local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+auth.json
+*.htpasswd
+
+# Runtime / DB / Backups
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sql
+*.sql.gz
+*.tar.gz
+backups/
+logs/
+cache/
+sessions/
+state-snapshots/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+
