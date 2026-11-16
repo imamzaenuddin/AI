@@ -45,6 +45,7 @@ EXPECTED_PROFILES = [
     ("ops-sysadmin", "Ops SysAdmin", False),
     ("ops-backup-dba", "Ops Backup & DBA", False),
     ("ops-secops", "Ops SecOps", False),
+    ("ops-model-hunter", "Ops Model Hunter & Free Scout", False),
     ("dev-architect", "Dev Architect", False),
     ("dev-fullstack", "Dev Fullstack", False),
     ("dev-qa", "Dev QA", False),
@@ -555,6 +556,19 @@ def get_work_tracking() -> dict[str, Any]:
     }
 
 
+def get_model_health() -> dict[str, Any]:
+    """Baca hasil probe CRON model AI & katalog model gratis dari model-health.json."""
+    report_path = HERMES_DATA_DIR / "shared" / "reports" / "model-health.json"
+    if not report_path.exists():
+        return {"exists": False, "agents": [], "free_candidates": [], "switches": []}
+    try:
+        data = json.loads(report_path.read_text(encoding="utf-8"))
+        data["exists"] = True
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        return {"exists": False, "error": str(exc), "agents": [], "free_candidates": [], "switches": []}
+
+
 def get_backup_inventory() -> dict[str, Any]:
     """Audit ringkas direktori backup /var/backups/apps secara read-only."""
     if not BACKUP_DIR.exists():
@@ -621,6 +635,7 @@ def collect_snapshot() -> dict[str, Any]:
         "nginx_ssl": nginx_ssl,
         "projects": get_projects_inventory(vhosts, code_url),
         "work_tracking": get_work_tracking(),
+        "model_health": get_model_health(),
         "backups": get_backup_inventory(),
     }
 

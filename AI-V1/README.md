@@ -341,6 +341,7 @@ Blueprint lengkap profil agent (`SOUL.md`, `AGENTS.md`, `TOOLS.md`, `USER.md`, `
   * [`agents/ops-sysadmin/`](./agents/ops-sysadmin/) — Monitoring VPS, Docker, `9Router`, dan SSL/Nginx.
   * [`agents/ops-backup-dba/`](./agents/ops-backup-dba/) — Audit backup (`:ro`) & kesehatan MySQL non-root.
   * [`agents/ops-secops/`](./agents/ops-secops/) — Audit keamanan, secret scanning, dan kepatuhan AI-V1.
+  * [`agents/ops-model-hunter/`](./agents/ops-model-hunter/) — CRON cek model aktif/kuota, auto-failover, dan pencari model gratisan (`scripts/check_models.py`).
 * **Tim Development:**
   * [`agents/dev-architect/`](./agents/dev-architect/) — Desain arsitektur, pemecahan task teknis, dan code review.
   * [`agents/dev-fullstack/`](./agents/dev-fullstack/) — Implementasi fitur ProjectWeb di `/workspace` & migrasi DB aman.

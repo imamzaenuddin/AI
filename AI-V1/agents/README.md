@@ -14,6 +14,7 @@ flowchart TD
         Sys["ops-sysadmin<br/>Infra, Docker, Nginx, 9Router"]
         DBA["ops-backup-dba<br/>Backup Auditor & MySQL Non-Root"]
         Sec["ops-secops<br/>Security, Audit Log & Secret Scan"]
+        MH["ops-model-hunter<br/>CRON Model Check & Free-Model Scout"]
     end
 
     subgraph DEV["Tim Development (Dev)"]
@@ -35,6 +36,7 @@ flowchart TD
 | [ops-sysadmin](./ops-sysadmin/) | `ops-sysadmin` | Operasional | Monitoring VPS, Docker, 9Router, SSL/Nginx | `enabled: false` (Dipanggil via PM/Cron) |
 | [ops-backup-dba](./ops-backup-dba/) | `ops-backup-dba` | Operasional | Verifikasi Backup (`:ro`) & Kesehatan MySQL Non-Root | `enabled: false` |
 | [ops-secops](./ops-secops/) | `ops-secops` | Operasional | Audit Keamanan, Secret Scan & Kepatuhan AI-V1 | `enabled: false` |
+| [ops-model-hunter](./ops-model-hunter/) | `ops-model-hunter` | Operasional | CRON Cek Kuota Model, Auto-Failover & Pencari Model Gratis | `enabled: false` |
 | [dev-architect](./dev-architect/) | `dev-architect` | Development | Desain Teknis, Pembagian Task & Code Review | `enabled: false` |
 | [dev-fullstack](./dev-fullstack/) | `dev-fullstack` | Development | Coding ProjectWeb (`/workspace/<app>`) & Migrasi Aman | `enabled: false` |
 | [dev-qa](./dev-qa/) | `dev-qa` | Development | Automated Test, Smoke Test & Verifikasi Rilis | `enabled: false` |
@@ -58,7 +60,7 @@ Setelah setup infrastruktur dasar VPS & container Hermes mengikuti [AI-V1/README
 ### Langkah 1 — Salin Profil Agent ke `/opt/hermes/data/profiles/`
 ```bash
 # Jalankan sebagai admin VPS, lalu pastikan kepemilikan tetap 10001:10001
-for agent_dir in 00-pm-coordinator ops-sysadmin ops-backup-dba ops-secops dev-architect dev-fullstack dev-qa; do
+for agent_dir in 00-pm-coordinator ops-sysadmin ops-backup-dba ops-secops ops-model-hunter dev-architect dev-fullstack dev-qa; do
   case "$agent_dir" in
     00-pm-coordinator) profile_name="pm-lead" ;;
     *) profile_name="$agent_dir" ;;
@@ -80,11 +82,13 @@ sudo chown 10001:10001 /opt/hermes/data/.env
 
 ### Langkah 3 — Siapkan Direktori Kerja, Task Board, & Slot Plugin `office-3d`
 ```bash
-sudo mkdir -p /opt/hermes/data/shared/tasks /opt/hermes/data/shared/reports /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins
+sudo mkdir -p /opt/hermes/data/shared/tasks /opt/hermes/data/shared/reports /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins /opt/hermes/data/scripts /opt/hermes/data/cron
 sudo cp AI-V1/agents/TASKS.md /opt/hermes/data/shared/tasks/TASKS.md
 sudo cp AI-V1/agents/worklog.example.json /opt/hermes/data/shared/tasks/worklog.json
+sudo cp AI-V1/scripts/check_models.py /opt/hermes/data/scripts/check_models.py
+sudo cp AI-V1/agents/cron.jobs.example.json /opt/hermes/data/cron/jobs.json
 sudo cp AI-V1/agents/CREDENTIALS_POLICY.md /opt/hermes/data/credentials/CREDENTIALS_POLICY.md
-sudo chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins
+sudo chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins /opt/hermes/data/scripts /opt/hermes/data/cron
 sudo chmod 700 /opt/hermes/data/credentials
 ```
 

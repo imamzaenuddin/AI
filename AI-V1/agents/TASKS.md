@@ -19,7 +19,8 @@ Dokumen ini menjadi panduan tugas awal (*bootstrap*), tugas operasional rutin, d
 | `BOOT-04` | Uji akses DB non-root MySQL, verifikasi mount `/opt/data/backups/apps` berstatus read-only (`:ro`), dan cek skrip backup host | `ops-backup-dba` | `BOOT-02` | Query `SELECT 1` sukses dengan user non-root; tulis ke `/opt/data/backups/apps` gagal (`Read-only file system`) | `[ ]` |
 | `BOOT-05` | Audit keamanan awal: cek `Running as ROOT`, cek secret bocor di `/workspace`, validasi `dashboard.basic_auth` & SSL domain `hermes.<DOMAIN>` | `ops-secops` | `BOOT-01` | Laporan audit keamanan nol temuan kritikal | `[ ]` |
 | `BOOT-06` | Pindai seluruh proyek eksisting di `/workspace/` (status Git, stack teknologi, ketersediaan `.env.example` & test suite) | `dev-architect` | `BOOT-01` | Peta arsitektur aplikasi `/workspace` terdokumentasi di `/opt/data/shared/reports/workspace-map.md` | `[ ]` |
-| `BOOT-07` | Verifikasi slot plugin `office-3d` terpasang di `/opt/data/desktop-plugins/office-3d` (`hermes plugins install office-3d`) dan seluruh 7 profil agent tampil tanpa duplikasi plugin auth di `profiles/*/config.yaml` | `pm-lead` | `BOOT-01` | Plugin `office-3d` aktif di launch scope utama & dashboard merespons normal | `[ ]` |
+| `BOOT-07` | Verifikasi slot plugin `office-3d` terpasang di `/opt/data/desktop-plugins/office-3d` (`hermes plugins install office-3d`) dan seluruh profil agent tampil tanpa duplikasi plugin auth di `profiles/*/config.yaml` | `pm-lead` | `BOOT-01` | Plugin `office-3d` aktif di launch scope utama & dashboard merespons normal | `[ ]` |
+| `BOOT-08` | Jalankan probe awal `/opt/data/scripts/check_models.py --discover-free` untuk cek kesehatan model semua agent & daftar kandidat model gratis | `ops-model-hunter` | `BOOT-01` | Laporan `model-health.json` & `model-health.md` terbuat | `[ ]` |
 
 ---
 
@@ -32,6 +33,8 @@ Dokumen ini menjadi panduan tugas awal (*bootstrap*), tugas operasional rutin, d
 | `OPS-03` | Audit harian dump SQL & arsip mingguan di `/opt/data/backups/apps` (cek ukuran file > 0, usia file terbaru, dan kepatuhan retensi 5–7 harian / max 2 mingguan) | `ops-backup-dba` | Harian (07:30 WIB) | Laporan `daily-backup-audit.md` | `[ ]` |
 | `OPS-04` | Cek performa & kesehatan tabel MySQL proyek (slow query / ukuran tabel / koneksi idle) menggunakan akun non-root | `ops-backup-dba` | Mingguan (Rabu 09:00 WIB) | Rekomendasi indeks / optimasi ke `dev-architect` via `pm-lead` | `[ ]` |
 | `OPS-05` | Pindai repositori `/workspace/*` dan log `/opt/data` untuk mendeteksi kebocoran `.env`/API key, permission melenceng, atau error `401`/`Conflict` | `ops-secops` | Harian (21:00 WIB) & setiap pre-release | Laporan keamanan ke `pm-lead` (alert instan jika ada temuan High/Critical) | `[ ]` |
+| `OPS-06` | Cek kesehatan & kuota model AI seluruh agent via `9Router`; lakukan *auto-switch* bila model habis/down (`check_models.py --auto-switch`) | `ops-model-hunter` | CRON Setiap 2 Jam | Update `model-health.json` + notifikasi ke `pm-lead` jika ada failover | `[ ]` |
+| `OPS-07` | Cari & verifikasi kandidat model gratisan terbaru (>= 32k context) dari OpenRouter/9Router (`check_models.py --discover-free`) | `ops-model-hunter` | CRON Setiap 6 Jam | Katalog model gratis terbaru di `/opt/data/shared/reports/model-health.md` | `[ ]` |
 
 ---
 

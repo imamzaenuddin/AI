@@ -164,6 +164,12 @@
       </div>
     </section>
 
+    <!-- Status Model AI Agent & Kandidat Model Gratis (CRON) -->
+    <section class="card">
+      <h2>Status Model AI Per Agent &amp; Katalog Model Gratis (CRON ops-model-hunter)</h2>
+      <div id="modelHealthPanel"></div>
+    </section>
+
     <!-- Akses Cepat Subdomain & Port -->
     <section class="grid-2">
       <div class="card">
@@ -573,6 +579,53 @@ sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/app
           </table>` : '<p class="kpi-sub">Belum ada file backup di /var/backups/apps.</p>'}`;
     }
 
+    function renderModelHealth(data) {
+      const mh = data.model_health || {};
+      if (!mh.exists) {
+        document.getElementById('modelHealthPanel').innerHTML =
+          '<p class="kpi-sub">Belum ada hasil CRON <code>model-health.json</code>. Jalankan: <code>python3 /opt/data/scripts/check_models.py --discover-free</code></p>';
+        return;
+      }
+      const agents = mh.agents || [];
+      const freeList = mh.free_candidates || [];
+      document.getElementById('modelHealthPanel').innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          ${pill('Checked: ' + (mh.checked_at || '-'), 'muted-pill')}
+          ${pill('9Router: ' + (mh.ninerouter_reachable ? 'Reachable' : 'Down'), mh.ninerouter_reachable ? 'ok' : 'bad')}
+          ${pill('Working Fallback: ' + (mh.working_fallback || '-'), mh.working_fallback ? 'ok' : 'warn')}
+          ${pill('Auto-Switches: ' + ((mh.switches || []).length), (mh.switches || []).length ? 'warn' : 'muted-pill')}
+        </div>
+        <div class="grid-2">
+          <div>
+            <table>
+              <thead><tr><th>Agent</th><th>Model Aktif</th><th>Status</th></tr></thead>
+              <tbody>
+                ${agents.map(a => {
+                  const st = a.status || '-';
+                  const cls = st === 'ACTIVE' ? 'ok' : (st === 'SWITCHED' || st === 'UNCONFIGURED' ? 'warn' : 'bad');
+                  return `<tr><td><code>${esc(a.agent)}</code></td><td><code>${esc(a.model || '-')}</code></td><td>${pill(st, cls)}</td></tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            ${freeList.length ? `
+              <table>
+                <thead><tr><th>Model Gratis Ditemukan</th><th>Context</th><th>9Router</th></tr></thead>
+                <tbody>
+                  ${freeList.slice(0, 8).map(c => `
+                    <tr>
+                      <td><code>${esc(c.id)}</code></td>
+                      <td>${esc(c.context_length || '-')}</td>
+                      <td>${c.in_ninerouter ? pill('Siap', 'ok') : pill('Perlu Route', 'muted-pill')}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>` : '<p class="kpi-sub">Belum ada daftar model gratis di laporan terakhir.</p>'}
+          </div>
+        </div>`;
+    }
+
     async function refreshAll() {
       try {
         const res = await fetch('/api/status', { cache: 'no-store' });
@@ -582,6 +635,7 @@ sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/app
         renderKPIs(data);
         renderLaunchers(data);
         renderWorkTracking(data);
+        renderModelHealth(data);
         renderVhostsAndPorts(data);
         renderDockerAndHermes(data);
         renderServicesAndSoftware(data);

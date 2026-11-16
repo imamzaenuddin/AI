@@ -1,0 +1,41 @@
+{
+  "jobs": [
+    {
+      "id": "ops-model-health-check",
+      "schedule": "0 */2 * * *",
+      "profile": "ops-model-hunter",
+      "enabled": true,
+      "command": "python3 /opt/data/scripts/check_models.py --auto-switch",
+      "description": "Cek status & kuota model AI semua agent via 9Router setiap 2 jam dan lakukan auto-failover bila habis/error"
+    },
+    {
+      "id": "ops-free-model-scout",
+      "schedule": "0 */6 * * *",
+      "profile": "ops-model-hunter",
+      "enabled": true,
+      "command": "python3 /opt/data/scripts/check_models.py --discover-free",
+      "description": "Cari & verifikasi katalog model gratisan terbaru (>=32k context) setiap 6 jam"
+    },
+    {
+      "id": "ops-daily-infra-check",
+      "schedule": "0 7 * * *",
+      "profile": "ops-sysadmin",
+      "enabled": true,
+      "prompt": "Jalankan OPS-01 (cek kesehatan container, 9Router, RAM, disk <70%), simpan laporan ke /opt/data/shared/reports/, dan perbarui worklog.json."
+    },
+    {
+      "id": "ops-daily-backup-audit",
+      "schedule": "30 7 * * *",
+      "profile": "ops-backup-dba",
+      "enabled": true,
+      "prompt": "Jalankan OPS-03 (audit backup :ro di /opt/data/backups/apps dan cek retensi), simpan laporan ke /opt/data/shared/reports/daily-backup-audit.md, dan perbarui worklog.json."
+    },
+    {
+      "id": "ops-daily-security-scan",
+      "schedule": "0 21 * * *",
+      "profile": "ops-secops",
+      "enabled": true,
+      "prompt": "Jalankan OPS-05 (audit log, secret scan /workspace, dan verifikasi anti-conflict Telegram), simpan laporan ke /opt/data/shared/reports/, dan perbarui worklog.json."
+    }
+  ]
+}
