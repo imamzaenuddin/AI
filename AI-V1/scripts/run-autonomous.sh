@@ -55,7 +55,7 @@ chmod +x /opt/vps-dashboard/server.py
 systemctl restart vps-monitor.service
 
 cp /opt/AI-V1/AI-V1/scripts/check_models.py /opt/hermes/data/scripts/check_models.py
-chown 10001:10001 /opt/hermes/data/scripts/check_models.py
+chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/scripts /opt/hermes/data/cron /opt/hermes/data/profiles
 
 log "[4/5] Jalankan probe model AI semua agent (UID 10001)..."
 if docker ps --format '{{.Names}}' | grep -qx 'hermes-gateway'; then
@@ -67,3 +67,4 @@ rm -rf /home/ubuntu/restore-bundle /tmp/hermes-import
 bash /opt/AI-V1/AI-V1/scripts/monitor-cli.sh
 
 log "=== AI-V1 AUTONOMOUS SYNC & VERIFY DONE ==="
+
