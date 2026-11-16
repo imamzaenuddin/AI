@@ -169,3 +169,4 @@ Jika sebelumnya Hermes atau bot Telegram sudah berjalan langsung di host (misal 
    ```
 3. Jika sebelumnya memakai service Hermes/bot lama, jalankan kembali service lama sementara investigasi dilakukan.
 4. Jika terjadi perubahan tak terduga pada database, pulihkan dari `${BACKUP_DIR}/db/all-databases.sql.gz` (atau dump per database terkait).
+

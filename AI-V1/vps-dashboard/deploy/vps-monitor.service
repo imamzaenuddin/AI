@@ -1,0 +1,17 @@
+[Unit]
+Description=AI-V1 VPS Control & Inventory Dashboard (Read-Only)
+After=network.target docker.service nginx.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/vps-dashboard
+Environment=VPS_MONITOR_HOST=127.0.0.1
+Environment=VPS_MONITOR_PORT=9120
+ExecStart=/usr/bin/python3 /opt/vps-dashboard/server.py
+Restart=on-failure
+RestartSec=5
+MemoryHigh=80M
+MemoryMax=128M
+
+[Install]
+WantedBy=multi-user.target

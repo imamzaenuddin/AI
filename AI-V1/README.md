@@ -53,6 +53,7 @@ flowchart LR
 | :--- | :--- | :--- | :--- |
 | **Nginx** | `0.0.0.0:80`, `0.0.0.0:443` | Ya (HTTPS) | Reverse proxy + SSL Let's Encrypt |
 | **Hermes Dashboard** | `127.0.0.1:9119` | Via Nginx (`hermes.<DOMAIN>`) | Container wajib listen `0.0.0.0:9119`, dipublish `127.0.0.1:9119:9119` |
+| **VPS Monitor Dashboard** | `127.0.0.1:9120` | Via Nginx + `auth_basic` (`monitor.<DOMAIN>`) | Dashboard inventaris & status server read-only ([`vps-dashboard/`](./vps-dashboard/README.md)) |
 | **9Router Primary** | `127.0.0.1:20128` (+ bridge GW) | Opsional via Nginx + `auth_basic` | AI Gateway utama untuk Hermes |
 | **9Router Secondary** | `127.0.0.1:20129` | Opsional via Nginx + `auth_basic` | Cadangan / instance terpisah |
 | **MySQL / MariaDB** | `127.0.0.1:3306` (+ bridge GW) | Tidak | Hanya boleh diakses user DB non-root oleh app/container |
@@ -343,5 +344,12 @@ Blueprint lengkap profil agent (`SOUL.md`, `AGENTS.md`, `TOOLS.md`, `USER.md`, `
   * [`agents/dev-fullstack/`](./agents/dev-fullstack/) — Implementasi fitur ProjectWeb di `/workspace` & migrasi DB aman.
   * [`agents/dev-qa/`](./agents/dev-qa/) — Automated test, smoke test, dan verifikasi *Release Gate*.
 * **Catatan Tugas Lintas Tim:** [`agents/TASKS.md`](./agents/TASKS.md).
+
+---
+
+## 11. VPS Control & Inventory Dashboard (`vps-dashboard/`)
+
+Untuk memantau secara visual apa saja yang sudah terinstall dan berjalan di VPS (resource CPU/RAM/Disk, layanan `systemd`, container Docker, profil agent & slot `office-3d`, masa berlaku SSL, ProjectWeb, serta status backup), gunakan paket dashboard ringan tanpa dependensi eksternal di [`vps-dashboard/`](./vps-dashboard/README.md).
+
 
 

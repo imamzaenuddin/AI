@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-V1 VPS Control & Inventory Dashboard</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a2f;
+      --panel-alt: #18233f;
+      --border: #263459;
+      --text: #e6ecf8;
+      --muted: #93a3c7;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --blue: #38bdf8;
+      --purple: #a78bfa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(11, 16, 32, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 22px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand { display: flex; flex-direction: column; }
+    .brand h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.02em; }
+    .brand small { color: var(--muted); font-size: 0.8rem; }
+    .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    button, .chip-link {
+      background: var(--panel-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button:hover, .chip-link:hover { border-color: var(--blue); }
+    main { max-width: 1400px; margin: 0 auto; padding: 20px; display: grid; gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      color: #cbd5f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid rgba(38, 52, 89, 0.7);
+      padding-bottom: 8px;
+    }
+    .kpi-value { font-size: 1.45rem; font-weight: 700; margin: 4px 0; }
+    .kpi-sub { font-size: 0.8rem; color: var(--muted); }
+    .bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #0a0f1d;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+    }
+    .bar-fill { height: 100%; transition: width 0.3s ease; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .ok { background: rgba(34, 197, 94, 0.14); color: #86efac; border-color: rgba(34, 197, 94, 0.35); }
+    .warn { background: rgba(234, 179, 8, 0.14); color: #fde047; border-color: rgba(234, 179, 8, 0.35); }
+    .bad { background: rgba(239, 68, 68, 0.14); color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); }
+    .muted-pill { background: rgba(147, 163, 199, 0.12); color: var(--muted); border-color: rgba(147, 163, 199, 0.25); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid rgba(38, 52, 89, 0.55); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    code {
+      background: #0a0f1d;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      color: #93c5fd;
+    }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cmd-box {
+      background: #0a0f1d;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: #bae6fd;
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+    @media (max-width: 560px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>AI-V1 VPS Control &amp; Inventory Dashboard</h1>
+      <small id="metaLine">Memuat status server...</small>
+    </div>
+    <div class="controls">
+      <label style="font-size:0.83rem;color:var(--muted);display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="autoRefresh" checked /> Auto-refresh (15s)
+      </label>
+      <button id="refreshBtn" type="button">Refresh Sekarang</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- KPI Ringkas -->
+    <section class="grid-4" id="kpiSection"></section>
+
+    <!-- Akses Cepat Subdomain & Port -->
+    <section class="grid-2">
+      <div class="card">
+        <h2>Akses Cepat Layanan &amp; Virtual Host Nginx</h2>
+        <div class="quick-links" id="quickLinks"></div>
+        <div style="margin-top:12px" id="vhostTable"></div>
+      </div>
+      <div class="card">
+        <h2>Port &amp; Gateway Health</h2>
+        <div id="portsTable"></div>
+      </div>
+    </section>
+
+    <!-- Docker Containers & Hermes AI-V1 -->
+    <section class="grid-2">
+      <div class="card">
+        <h2>Container Docker (Hermes &amp; Stack)</h2>
+        <div id="dockerTable"></div>
+      </div>
+      <div class="card">
+        <h2>Status Runtime Hermes, Plugin Office-3D &amp; Profil Agent</h2>
+        <div id="hermesPanel"></div>
+      </div>
+    </section>
+
+    <!-- Software Terinstall & Systemd Services -->
+    <section class="grid-2">
+      <div class="card">
+        <h2>Service Systemd Utama</h2>
+        <div id="servicesTable"></div>
+      </div>
+      <div class="card">
+        <h2>Paket &amp; Runtime Terinstall</h2>
+        <div id="softwareTable"></div>
+      </div>
+    </section>
+
+    <!-- SSL, ProjectWeb & Backup -->
+    <section class="grid-2">
+      <div class="card">
+        <h2>Sertifikat SSL (Let's Encrypt) &amp; ProjectWeb (/home/project)</h2>
+        <div id="sslTable"></div>
+        <div style="margin-top:14px" id="projectsTable"></div>
+      </div>
+      <div class="card">
+        <h2>Audit Backup (/var/backups/apps) &amp; Perintah Kontrol Aman</h2>
+        <div id="backupsPanel"></div>
+        <div class="cmd-box">
+# Cek kesehatan container &amp; log tanpa root/conflict:<br/>
+docker compose -f /opt/hermes/docker-compose.yml ps<br/>
+docker compose -f /opt/hermes/docker-compose.yml logs --tail=40 hermes-gateway<br/>
+# Backup cepat pra-perubahan:<br/>
+sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/apps/manual-$(date +%F).sql.gz
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const esc = (v) => String(v ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+    const pill = (text, cls) => `<span class="pill ${cls}">${esc(text)}</span>`;
+
+    const barColor = (pct) => {
+      if (pct === null || pct === undefined) return 'var(--blue)';
+      if (pct >= 85) return 'var(--red)';
+      if (pct >= 70) return 'var(--yellow)';
+      return 'var(--green)';
+    };
+
+    const formatUptime = (sec) => {
+      if (sec === null || sec === undefined) return '-';
+      const d = Math.floor(sec / 86400);
+      const h = Math.floor((sec % 86400) / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      return `${d}h ${h}j ${m}m`;
+    };
+
+    function renderKPIs(data) {
+      const sys = data.system || {};
+      const mem = sys.memory || {};
+      const rootDisk = (sys.disks || [])[0] || {};
+      const load = sys.load_avg ? `${sys.load_avg['1m']} / ${sys.load_avg['5m']} / ${sys.load_avg['15m']}` : '-';
+      const containers = (data.docker && data.docker.containers) || [];
+      const upContainers = containers.filter(c => c.healthy).length;
+      const profiles = (data.hermes && data.hermes.profiles) || [];
+      const installedProfiles = profiles.filter(p => p.installed).length;
+
+      document.getElementById('kpiSection').innerHTML = `
+        <div class="card">
+          <h2>Host &amp; Uptime</h2>
+          <div class="kpi-value">${esc(sys.hostname || '-')}</div>
+          <div class="kpi-sub">${esc(sys.os || '-')} (${esc(sys.arch || '-')})</div>
+          <div class="kpi-sub">Uptime: ${esc(formatUptime(sys.uptime_seconds))} · CPU: ${esc(sys.cpu_cores || '-')} core · Load: ${esc(load)}</div>
+        </div>
+        <div class="card">
+          <h2>Penggunaan RAM</h2>
+          <div class="kpi-value">${mem.percent !== null && mem.percent !== undefined ? esc(mem.percent) + '%' : '-'}</div>
+          <div class="kpi-sub">${esc(mem.used_mb ?? '-')} MB / ${esc(mem.total_mb ?? '-')} MB terpakai</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${Number(mem.percent || 0)}%;background:${barColor(mem.percent)}"></div></div>
+        </div>
+        <div class="card">
+          <h2>Disk Utama (${esc(rootDisk.path || '/')})</h2>
+          <div class="kpi-value">${rootDisk.percent !== undefined ? esc(rootDisk.percent) + '%' : '-'}</div>
+          <div class="kpi-sub">${esc(rootDisk.used_gb ?? '-')} GB / ${esc(rootDisk.total_gb ?? '-')} GB (Sisa ${esc(rootDisk.free_gb ?? '-')} GB) · Target &lt; 70%</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${Number(rootDisk.percent || 0)}%;background:${barColor(rootDisk.percent)}"></div></div>
+        </div>
+        <div class="card">
+          <h2>Stack Hermes &amp; Agent</h2>
+          <div class="kpi-value">${upContainers} / ${containers.length} Container</div>
+          <div class="kpi-sub">Profil Agent: ${installedProfiles} / ${profiles.length} terpasang</div>
+          <div class="kpi-sub">Plugin Office-3D: ${data.hermes?.office_3d_installed ? pill('Terpasang', 'ok') : pill('Belum', 'warn')}</div>
+        </div>
+      `;
+    }
+
+    function renderVhostsAndPorts(data) {
+      const vhosts = data.nginx_ssl?.vhosts || [];
+      const domains = [...new Set(vhosts.flatMap(v => v.server_names || []))];
+      document.getElementById('quickLinks').innerHTML = domains.length
+        ? domains.map(d => `<a class="chip-link" href="https://${esc(d)}" target="_blank" rel="noopener noreferrer">https://${esc(d)} ↗</a>`).join('')
+        : '<span class="kpi-sub">Belum ada virtual host Nginx terdeteksi di /etc/nginx/sites-enabled.</span>';
+
+      document.getElementById('vhostTable').innerHTML = vhosts.length ? `
+        <table>
+          <thead><tr><th>Config</th><th>Domain</th><th>Target</th><th>SSL</th></tr></thead>
+          <tbody>
+            ${vhosts.map(v => `
+              <tr>
+                <td><code>${esc(v.file)}</code></td>
+                <td>${(v.server_names || []).map(esc).join(', ') || '-'}</td>
+                <td><code>${(v.targets || []).map(esc).join(', ') || '-'}</code></td>
+                <td>${v.ssl_configured ? pill('HTTPS', 'ok') : pill('HTTP Only', 'warn')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>` : '';
+
+      const eps = data.endpoints || [];
+      document.getElementById('portsTable').innerHTML = `
+        <table>
+          <thead><tr><th>Layanan</th><th>Bind</th><th>Port</th><th>HTTP Probe</th></tr></thead>
+          <tbody>
+            ${eps.map(e => `
+              <tr>
+                <td>${esc(e.name)}</td>
+                <td><code>${esc(e.address)}</code></td>
+                <td>${e.listening ? pill('LISTENING', 'ok') : pill('DOWN', 'bad')}</td>
+                <td>${e.http ? (e.http.reachable ? pill('HTTP ' + e.http.status, 'ok') : pill('ERR', 'bad')) : pill('-', 'muted-pill')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    function renderDockerAndHermes(data) {
+      const docker = data.docker || {};
+      if (!docker.available) {
+        document.getElementById('dockerTable').innerHTML = `<p class="kpi-sub">${esc(docker.error || 'Docker tidak tersedia')}</p>`;
+      } else if (!docker.containers.length) {
+        document.getElementById('dockerTable').innerHTML = `<p class="kpi-sub">Belum ada container Docker berjalan.</p>`;
+      } else {
+        document.getElementById('dockerTable').innerHTML = `
+          <table>
+            <thead><tr><th>Container</th><th>Image</th><th>Status</th></tr></thead>
+            <tbody>
+              ${docker.containers.map(c => `
+                <tr>
+                  <td><strong>${esc(c.name)}</strong></td>
+                  <td><code>${esc(c.image)}</code></td>
+                  <td>${pill(c.status, c.healthy ? 'ok' : 'bad')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>`;
+      }
+
+      const h = data.hermes || {};
+      const envOk = h.env_exists && h.env_mode === '0o600' && h.env_uid === 10001;
+      document.getElementById('hermesPanel').innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+          ${pill('.env: ' + (h.env_exists ? `${h.env_mode} (uid:${h.env_uid})` : 'Hilang'), envOk ? 'ok' : 'warn')}
+          ${pill('gateway.sock: ' + (h.gateway_sock_exists ? 'Aktif' : 'Belum'), h.gateway_sock_exists ? 'ok' : 'warn')}
+          ${pill('credentials/: ' + (h.credentials_dir_exists ? 'Siap' : 'Belum'), h.credentials_dir_exists ? 'ok' : 'warn')}
+          ${pill('office-3d: ' + (h.office_3d_installed ? 'Installed' : 'Kosong'), h.office_3d_installed ? 'ok' : 'warn')}
+        </div>
+        <table>
+          <thead><tr><th>Profil Agent</th><th>Peran</th><th>Status</th><th>Telegram Rule</th></tr></thead>
+          <tbody>
+            ${(h.profiles || []).map(p => `
+              <tr>
+                <td><code>${esc(p.id)}</code></td>
+                <td>${esc(p.role)}</td>
+                <td>${p.installed ? pill('Terpasang', 'ok') : pill('Belum', 'warn')}</td>
+                <td>${p.telegram_enabled === null ? pill('-', 'muted-pill') : pill(p.telegram_enabled ? 'enabled: true' : 'enabled: false', p.telegram_compliant ? 'ok' : 'bad')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    function renderServicesAndSoftware(data) {
+      const svcs = data.services || [];
+      document.getElementById('servicesTable').innerHTML = `
+        <table>
+          <thead><tr><th>Service</th><th>Unit</th><th>Status</th></tr></thead>
+          <tbody>
+            ${svcs.map(s => {
+              let cls = 'muted-pill';
+              if (s.state === 'active') cls = 'ok';
+              else if (s.state === 'inactive' || s.state === 'failed') cls = 'bad';
+              return `<tr><td>${esc(s.label)}</td><td><code>${esc(s.unit)}</code></td><td>${pill(s.state, cls)}</td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
+
+      const sw = data.software || [];
+      document.getElementById('softwareTable').innerHTML = `
+        <table>
+          <thead><tr><th>Komponen</th><th>Status</th><th>Versi</th></tr></thead>
+          <tbody>
+            ${sw.map(i => `
+              <tr>
+                <td>${esc(i.name)}</td>
+                <td>${i.installed ? pill('Installed', 'ok') : pill('Missing', 'muted-pill')}</td>
+                <td><code>${esc(i.version)}</code></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    function renderSSLProjectsBackups(data) {
+      const certs = data.nginx_ssl?.certs || [];
+      document.getElementById('sslTable').innerHTML = certs.length ? `
+        <table>
+          <thead><tr><th>Domain SSL</th><th>Expired</th><th>Sisa Hari</th></tr></thead>
+          <tbody>
+            ${certs.map(c => {
+              const cls = c.days_left === null ? 'muted-pill' : (c.days_left <= 7 ? 'bad' : (c.days_left <= 14 ? 'warn' : 'ok'));
+              return `<tr><td>${esc(c.domain)}</td><td>${esc(c.not_after || '-')}</td><td>${pill(c.days_left !== null ? c.days_left + ' hari' : '-', cls)}</td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>` : '<p class="kpi-sub">Belum ada sertifikat di /etc/letsencrypt/live.</p>';
+
+      const projs = data.projects || [];
+      document.getElementById('projectsTable').innerHTML = projs.length ? `
+        <table>
+          <thead><tr><th>ProjectWeb</th><th>Git Branch</th><th>Standar</th></tr></thead>
+          <tbody>
+            ${projs.map(p => `
+              <tr>
+                <td><strong>${esc(p.name)}</strong></td>
+                <td>${p.is_git ? pill((p.branch || 'git') + (p.dirty ? ' *' : ''), p.dirty ? 'warn' : 'ok') : pill('Non-Git', 'warn')}</td>
+                <td>${p.has_env ? pill('.env', 'ok') : pill('no .env', 'muted-pill')} ${p.has_agents_md ? pill('AGENTS.md', 'ok') : pill('no AGENTS.md', 'warn')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>` : '<p class="kpi-sub">Belum ada folder aplikasi di /home/project.</p>';
+
+      const b = data.backups || {};
+      document.getElementById('backupsPanel').innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          ${pill('SQL Dumps: ' + (b.sql_count ?? 0), (b.sql_count || 0) > 0 ? 'ok' : 'warn')}
+          ${pill('Tar Archives: ' + (b.tar_count ?? 0), (b.tar_count || 0) <= 2 ? 'ok' : 'warn')}
+          ${pill('Pre-Migration Snapshots: ' + ((b.pre_migration_snapshots || []).length), 'muted-pill')}
+        </div>
+        ${(b.recent_files || []).length ? `
+          <table>
+            <thead><tr><th>File Backup Terbaru</th><th>Ukuran</th><th>Waktu</th></tr></thead>
+            <tbody>
+              ${b.recent_files.map(f => `
+                <tr><td><code>${esc(f.name)}</code></td><td>${esc(f.size_mb)} MB</td><td>${esc(f.modified_at)}</td></tr>
+              `).join('')}
+            </tbody>
+          </table>` : '<p class="kpi-sub">Belum ada file backup di /var/backups/apps.</p>'}`;
+    }
+
+    async function refreshAll() {
+      try {
+        const res = await fetch('/api/status', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        document.getElementById('metaLine').textContent = `Terakhir diperbarui: ${data.generated_at} · Host: ${data.system?.hostname || '-'}`;
+        renderKPIs(data);
+        renderVhostsAndPorts(data);
+        renderDockerAndHermes(data);
+        renderServicesAndSoftware(data);
+        renderSSLProjectsBackups(data);
+      } catch (err) {
+        document.getElementById('metaLine').textContent = `Gagal memuat status: ${err.message}`;
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', refreshAll);
+    setInterval(() => {
+      if (document.getElementById('autoRefresh').checked) refreshAll();
+    }, 15000);
+
+    refreshAll();
+  </script>
+</body>
+</html>
