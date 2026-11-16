@@ -1,0 +1,5 @@
+# Konfigurasi code-server AI-V1 (Salin ke /opt/code-server/config.yaml, chmod 600)
+bind-addr: 127.0.0.1:8443
+auth: password
+password: <STRONG_CODE_SERVER_PASSWORD>
+cert: false

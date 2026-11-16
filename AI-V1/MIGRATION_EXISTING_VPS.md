@@ -17,6 +17,7 @@ Setelah migrasi selesai, hanya direktori berikut yang menjadi standar resmi di V
 | :--- | :--- | :--- |
 | `/opt/hermes` | `root:root` / `10001:10001` (`data`, `ssh`) | Stack Docker Compose Hermes (`docker-compose.yml`, `data/`, `ssh/`) |
 | `/opt/vps-dashboard` | `root:root` | Dashboard monitoring visual AI-V1 (`127.0.0.1:9120`) |
+| `/opt/code-server` | `codeserver:dev` | Konfigurasi, data & ekstensi `code-server` (`127.0.0.1:8443`, membaca `/home/project`) |
 | `/home/project/<nama-app>` | `www-data` / grup `dev` + ACL `10001` | Seluruh aplikasi web produksi yang rapi (satu folder per app, dikelola Git) |
 | `/var/backups/apps` | `root:root` (`700` untuk `pre-migration-*`) | Arsip backup harian/mingguan & arsip `pre-migration-*` |
 | `/etc/nginx/sites-available/*` | `root:root` | 1 file virtual host per subdomain/app aktif (`sites-enabled/` symlink bersih) |
@@ -140,10 +141,23 @@ sudo rm -rf /var/www/html/* /home/project/*
 
 Ikuti panduan utama dari nol pada struktur yang sudah bersih:
 1. **Hardening & Struktur Direktori Resmi** sesuai [AI-V1/README.md](./README.md#3-breakdown-setup-bagian-1--hardening-vps-host):
-   - Buat user `hermes` (`UID 10001:10001`).
-   - Buat folder resmi: `/opt/hermes/data`, `/opt/hermes/ssh`, `/home/project`, `/var/backups/apps`, `/opt/vps-dashboard`.
+   - Buat user `hermes` (`UID 10001:10001`) dan user `codeserver` (grup bersama `dev`).
+   - Buat folder resmi: `/opt/hermes/data`, `/opt/hermes/ssh`, `/opt/vps-dashboard`, `/opt/code-server`, `/home/project`, `/var/backups/apps`.
 2. **Deploy Docker Hermes (`hermes-gateway` & `hermes-dashboard`)** (`UID 10001:10001`), pasang profil agent dari [`agents/README.md`](./agents/README.md), isi `/opt/hermes/data/.env`, dan pasang slot `office-3d` bila diperlukan.
-3. **Deploy `9Router` (`:20128`)** dan **[`vps-dashboard/`](./vps-dashboard/README.md) (`:9120`)**.
+3. **Deploy `9Router` (`:20128`), [`vps-dashboard/`](./vps-dashboard/README.md) (`:9120`), dan [`code-server/`](./code-server/README.md) (`:8443` membuka `/home/project`):**
+   - Pastikan config & ekstensi `code-server` berada di `/opt/code-server/`, bukan di dalam `/home/project`, agar folder proyek tetap bersih.
+4. **Jalankan Wizard Domain & Project Existing (`scripts/migration-wizard.sh`):**
+   ```bash
+   # Simulasi (dry-run) terlebih dahulu untuk meninjau konfigurasi yang dihasilkan:
+   bash AI-V1/scripts/migration-wizard.sh --dry-run
+
+   # Jalankan interaktif untuk memetakan domain utama, hermes, monitor, code-server, dan setiap project existing:
+   sudo bash AI-V1/scripts/migration-wizard.sh
+   ```
+   Wizard ini secara interaktif akan:
+   - Memetakan domain inti (`hermes.<DOMAIN>`, `monitor.<DOMAIN>`, `code.<DOMAIN>`, opsional `9router.<DOMAIN>`).
+   - Mendaftarkan setiap aplikasi web existing (`PHP/Laravel`, `PHP Native`, `Proxy Port`, `Static`) beserta database terkait.
+   - Menghasilkan file virtual host Nginx bersih di `/etc/nginx/sites-available/`, mengatur ACL `/home/project` untuk `10001` (`hermes`) & `codeserver`, mencetak perintah `certbot --nginx`, serta menyimpan manifest ke `/opt/hermes/data/shared/reports/migration-manifest.md`.
 
 ---
 
@@ -171,7 +185,8 @@ Masukkan kembali **hanya data yang memang dibutuhkan** dari `${BACKUP_DIR}` atau
 ## Fase 5 — Audit Kebersihan Struktur (*Zero Stray Folders Checklist*)
 
 - [ ] Tidak ada lagi folder Hermes lama di `/root/.hermes` atau folder proyek liar di `/var/www` / `/root`.
-- [ ] `ls -la /opt` hanya berisi folder resmi (`hermes`, `vps-dashboard`, `9router` bila di `/opt`).
+- [ ] `ls -la /opt` hanya berisi folder resmi (`hermes`, `vps-dashboard`, `code-server`, `9router` bila di `/opt`).
+- [ ] `https://code.<DOMAIN>` membuka workspace `/home/project` dengan user non-root `codeserver` tanpa membuat file config editor di dalam `/home/project`.
 - [ ] `ls -la /home/project` hanya berisi folder aplikasi aktif yang rapi (masing-masing berbasis Git).
 - [ ] `ls -la /etc/nginx/sites-enabled` hanya berisi symlink layanan aktif yang semuanya sudah HTTPS (`certbot`).
 - [ ] `docker compose -f /opt/hermes/docker-compose.yml ps` menunjukkan `hermes-gateway` & `hermes-dashboard` `Up (healthy)` tanpa error `Running as ROOT` atau `Conflict: getUpdates`.

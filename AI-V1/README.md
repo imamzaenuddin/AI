@@ -45,6 +45,7 @@ flowchart LR
 | `/opt/hermes/data` | `10001:10001` (`hermes`) | Data runtime Hermes (`config.yaml`, `.env`, `profiles/`, `desktop-plugins/`, `cron/`, `skills/`, `state.db`, `scripts/`) | `/opt/data` (`rw`) |
 | `/opt/hermes/ssh` | `10001:10001` (`700`/`600`) | SSH key khusus monitoring server eksternal | `/home/hermes/.ssh` (`ro`) |
 | `/home/project` | `www-data` / `dev` / grup bersama | Source code aplikasi web buatan tim agent | `/workspace` (`rw`) |
+| `/opt/code-server` | `codeserver:dev` | Config, data & ekstensi `code-server` (membaca `/home/project`) | Tidak di-mount |
 | `/var/backups/apps` | `root:root` | Dump SQL harian & arsip mingguan aplikasi | `/opt/data/backups/apps` (`ro`) |
 | `/etc/nginx`, `/etc/systemd`, `/etc/ssh` | `root:root` | Konfigurasi inti host OS & SSL | **Dilarang di-mount** |
 
@@ -54,6 +55,7 @@ flowchart LR
 | **Nginx** | `0.0.0.0:80`, `0.0.0.0:443` | Ya (HTTPS) | Reverse proxy + SSL Let's Encrypt |
 | **Hermes Dashboard** | `127.0.0.1:9119` | Via Nginx (`hermes.<DOMAIN>`) | Container wajib listen `0.0.0.0:9119`, dipublish `127.0.0.1:9119:9119` |
 | **VPS Monitor Dashboard** | `127.0.0.1:9120` | Via Nginx + `auth_basic` (`monitor.<DOMAIN>`) | Dashboard inventaris & status server read-only ([`vps-dashboard/`](./vps-dashboard/README.md)) |
+| **Code-Server (VS Code Web)** | `127.0.0.1:8443` | Via Nginx (`code.<DOMAIN>`) | Editor web non-root membuka `/home/project` ([`code-server/`](./code-server/README.md)) |
 | **9Router Primary** | `127.0.0.1:20128` (+ bridge GW) | Opsional via Nginx + `auth_basic` | AI Gateway utama untuk Hermes |
 | **9Router Secondary** | `127.0.0.1:20129` | Opsional via Nginx + `auth_basic` | Cadangan / instance terpisah |
 | **MySQL / MariaDB** | `127.0.0.1:3306` (+ bridge GW) | Tidak | Hanya boleh diakses user DB non-root oleh app/container |
@@ -350,6 +352,13 @@ Blueprint lengkap profil agent (`SOUL.md`, `AGENTS.md`, `TOOLS.md`, `USER.md`, `
 ## 11. VPS Control & Inventory Dashboard (`vps-dashboard/`)
 
 Untuk memantau secara visual apa saja yang sudah terinstall dan berjalan di VPS (resource CPU/RAM/Disk, layanan `systemd`, container Docker, profil agent & slot `office-3d`, masa berlaku SSL, ProjectWeb, serta status backup), gunakan paket dashboard ringan tanpa dependensi eksternal di [`vps-dashboard/`](./vps-dashboard/README.md).
+
+---
+
+## 12. Code-Server (`/home/project`) & Wizard Migrasi (`scripts/`)
+
+* **VS Code di Browser (`code.<DOMAIN>`):** Gunakan [`code-server/`](./code-server/README.md) (`127.0.0.1:8443`) dengan user non-root `codeserver` yang langsung membuka `/home/project` sementara seluruh config/ekstensi tersimpan rapi di `/opt/code-server/`.
+* **Wizard Domain & Project Existing:** Gunakan [`scripts/migration-wizard.sh`](./scripts/migration-wizard.sh) saat migrasi/rebuild untuk memetakan domain, layanan inti (`hermes`, `monitor`, `code`), serta seluruh project web existing dan membuat virtual host Nginx bersih secara interaktif.
 
 
 

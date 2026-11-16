@@ -184,6 +184,7 @@ def get_installed_software() -> list[dict[str, Any]]:
         ("Node.js", ["node", "--version"]),
         ("Python 3", ["python3", "--version"]),
         ("Git", ["git", "--version"]),
+        ("Code-Server", ["code-server", "--version"]),
         ("UFW Firewall", ["ufw", "version"]),
         ("Rclone", ["rclone", "version"]),
     ]
@@ -212,6 +213,7 @@ def get_systemd_services() -> list[dict[str, Any]]:
         ("9router", "9Router Primary (:20128)"),
         ("9router-secondary", "9Router Secondary (:20129)"),
         ("vps-monitor", "AI-V1 VPS Monitor (:9120)"),
+        ("code-server", "Code-Server /home/project (:8443)"),
         ("ssh", "OpenSSH Daemon"),
         ("ufw", "UFW Firewall"),
     ]
@@ -318,6 +320,7 @@ def get_ports_and_endpoints() -> list[dict[str, Any]]:
         {"name": "Nginx HTTPS", "host": "127.0.0.1", "port": 443, "probe": None},
         {"name": "Hermes Dashboard", "host": "127.0.0.1", "port": 9119, "probe": "http://127.0.0.1:9119/login"},
         {"name": "VPS Monitor Dashboard", "host": "127.0.0.1", "port": PORT, "probe": None},
+        {"name": "Code-Server (VS Code Web)", "host": "127.0.0.1", "port": 8443, "probe": None},
         {"name": "9Router Primary", "host": "127.0.0.1", "port": 20128, "probe": "http://127.0.0.1:20128/v1/models"},
         {"name": "9Router Secondary", "host": "127.0.0.1", "port": 20129, "probe": None},
         {"name": "MySQL / MariaDB", "host": "127.0.0.1", "port": 3306, "probe": None},

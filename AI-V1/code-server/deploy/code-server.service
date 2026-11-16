@@ -1,0 +1,17 @@
+[Unit]
+Description=AI-V1 Code-Server (Workspace /home/project)
+After=network.target
+
+[Service]
+Type=simple
+User=codeserver
+Group=dev
+WorkingDirectory=/home/project
+ExecStart=/usr/bin/code-server --config /opt/code-server/config.yaml --user-data-dir /opt/code-server/data --extensions-dir /opt/code-server/extensions /home/project
+Restart=on-failure
+RestartSec=5
+MemoryHigh=700M
+MemoryMax=1000M
+
+[Install]
+WantedBy=multi-user.target
