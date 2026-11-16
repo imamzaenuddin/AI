@@ -1,0 +1,34 @@
+# Konfigurasi Profil Hermes: dev-qa
+# Wajib telegram.enabled: false agar tidak bentrok dengan pm-lead.
+
+profile:
+  id: dev-qa
+  name: "Dev QA & Release Verification Agent"
+  team: dev
+
+model:
+  default: <NAMA_MODEL_COMBO>
+  provider: custom-http
+  base_url: http://host.docker.internal:20128/v1
+  context_length: 128000
+
+providers:
+  custom-http:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+    models:
+      <NAMA_MODEL_COMBO>:
+        context_length: 128000
+  ninerouter:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+
+platforms:
+  telegram:
+    enabled: false
+
+paths:
+  data_dir: /opt/data
+  workspace_dir: /workspace
+  shared_tasks: /opt/data/shared/tasks
+  reports_dir: /opt/data/shared/reports

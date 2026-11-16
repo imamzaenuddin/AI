@@ -312,3 +312,21 @@ Telegram **Bot API Long Polling (`getUpdates`)** hanya mengizinkan **1 proses ak
 | **Warning `custom-http has no resolvable api_key`** | Blok `providers.custom-http` di `config.yaml` tidak memiliki `key_env` | Tambahkan `key_env: NINEROUTER_API_KEY` (dan isi nilainya di `.env`), lalu restart gateway. |
 | **Disk VPS cepat penuh (>85%)** | Arsip `tar.gz` di `/var/backups/apps` menumpuk atau log Docker tidak dibatasi | Aktifkan rotasi retensi skrip backup + `max-size: 10m` di `/etc/docker/daemon.json` + `docker system prune`. |
 
+---
+
+## 10. Organisasi Tim Agent Otonom (PM · Operasional · Development)
+
+Blueprint lengkap profil agent (`SOUL.md`, `AGENTS.md`, `TOOLS.md`, `USER.md`, `MEMORY.md`, `TASKS.md`, `config.yaml`), kebijakan pemegang kredensial, serta daftar tugas otonom tersedia di folder [`agents/`](./agents/README.md):
+
+* **Pemegang Utama Kredensial & Orkestrator (`pm-lead`):** [`agents/00-pm-coordinator/`](./agents/00-pm-coordinator/) — Satu-satunya pintu gateway Telegram & pemegang master kredensial ([Kebijakan Kredensial](./agents/CREDENTIALS_POLICY.md)).
+* **Tim Operasional:**
+  * [`agents/ops-sysadmin/`](./agents/ops-sysadmin/) — Monitoring VPS, Docker, `9Router`, dan SSL/Nginx.
+  * [`agents/ops-backup-dba/`](./agents/ops-backup-dba/) — Audit backup (`:ro`) & kesehatan MySQL non-root.
+  * [`agents/ops-secops/`](./agents/ops-secops/) — Audit keamanan, secret scanning, dan kepatuhan AI-V1.
+* **Tim Development:**
+  * [`agents/dev-architect/`](./agents/dev-architect/) — Desain arsitektur, pemecahan task teknis, dan code review.
+  * [`agents/dev-fullstack/`](./agents/dev-fullstack/) — Implementasi fitur ProjectWeb di `/workspace` & migrasi DB aman.
+  * [`agents/dev-qa/`](./agents/dev-qa/) — Automated test, smoke test, dan verifikasi *Release Gate*.
+* **Catatan Tugas Lintas Tim:** [`agents/TASKS.md`](./agents/TASKS.md).
+
+

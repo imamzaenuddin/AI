@@ -1,0 +1,37 @@
+# Konfigurasi Profil Hermes: pm-lead (Project Manager & Pemegang Utama Kredensial)
+# Catatan: Hanya profil utama/gateway ini yang mengaktifkan Telegram Bot.
+
+profile:
+  id: pm-lead
+  name: "PM Coordinator & Credential Custodian"
+  team: management
+
+model:
+  default: <NAMA_MODEL_COMBO>
+  provider: custom-http
+  base_url: http://host.docker.internal:20128/v1
+  context_length: 128000
+
+providers:
+  custom-http:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+    models:
+      <NAMA_MODEL_COMBO>:
+        context_length: 128000
+  ninerouter:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+
+platforms:
+  telegram:
+    enabled: true
+
+gateway:
+  multiplex_profiles: true
+
+paths:
+  data_dir: /opt/data
+  workspace_dir: /workspace
+  credentials_dir: /opt/data/credentials
+  shared_tasks: /opt/data/shared/tasks/TASKS.md

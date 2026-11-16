@@ -1,0 +1,33 @@
+# Konfigurasi Profil Hermes: ops-sysadmin
+# Wajib telegram.enabled: false agar tidak bentrok dengan pm-lead (Anti-Conflict Rule).
+
+profile:
+  id: ops-sysadmin
+  name: "Ops SysAdmin Agent"
+  team: ops
+
+model:
+  default: <NAMA_MODEL_COMBO>
+  provider: custom-http
+  base_url: http://host.docker.internal:20128/v1
+  context_length: 128000
+
+providers:
+  custom-http:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+    models:
+      <NAMA_MODEL_COMBO>:
+        context_length: 128000
+  ninerouter:
+    api: http://host.docker.internal:20128/v1
+    key_env: NINEROUTER_API_KEY
+
+platforms:
+  telegram:
+    enabled: false
+
+paths:
+  data_dir: /opt/data
+  reports_dir: /opt/data/shared/reports
+  ssh_dir: /home/hermes/.ssh
