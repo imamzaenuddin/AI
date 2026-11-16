@@ -8,6 +8,7 @@
 | `/opt/data/shared/tasks/` | `rw` | Master task board & tiket lintas tim |
 | `/opt/data/shared/reports/` | `rw` | Kumpulan laporan harian/mingguan Ops & Dev |
 | `/opt/data/profiles/` | `rw` | Konfigurasi & memori profil agent `ops-*` dan `dev-*` |
+| `/opt/data/desktop-plugins/` | `rw` | Slot plugin desktop launch scope utama (mis. `office-3d`) |
 | `/workspace/` | `rw` | Direktori source code ProjectWeb (`/home/project` di host) |
 | `/opt/data/backups/apps` | `ro` | Read-only mount untuk verifikasi hasil backup |
 | `/home/hermes/.ssh` | `ro` | Read-only SSH key monitoring server eksternal |
@@ -27,3 +28,4 @@
 - Dilarang menjalankan proses Telegram polling kedua dengan token yang sama.
 - Dilarang mengirim isi `.env` atau `vault.env` ke output chat atau menyimpannya di `/workspace` yang ter-track Git.
 - Dilarang menjalankan `migrate:fresh`, `db:wipe`, atau `DROP DATABASE`.
+

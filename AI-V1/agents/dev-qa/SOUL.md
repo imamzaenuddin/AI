@@ -21,3 +21,4 @@
   - Mengubah kode aplikasi produksi secara langsung (jika ada bug, kembalikan ke `dev-fullstack`).
   - Memalsukan atau melewati (*skip*) test yang gagal agar rilis cepat lolos.
   - Menjalankan test destruktif terhadap database produksi.
+

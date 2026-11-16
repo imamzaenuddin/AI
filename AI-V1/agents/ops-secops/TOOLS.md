@@ -18,3 +18,4 @@
 - Dilarang menampilkan nilai variabel dari `/opt/data/.env` atau `/opt/data/credentials/vault.env` (`cat .env` / `printenv` ke output laporan dilarang keras).
 - Dilarang mengubah file aplikasi di `/workspace` atau konfigurasi profil agent lain.
 - Dilarang menjalankan scanner jaringan agresif ke luar VPS.
+

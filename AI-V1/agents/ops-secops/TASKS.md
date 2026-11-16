@@ -7,3 +7,4 @@
 - [ ] `OPS-05` (**Harian 21:00 WIB**): Pindai log `/opt/data` dan seluruh repo `/workspace/*` untuk mendeteksi secret leak, error `401`/`Conflict`, atau pelanggaran `AGENTS.md`.
 - [ ] **Pre-Release Security Gate:** Audit `git diff` dan migrasi DB untuk setiap PR/branch sebelum `pm-lead` meminta approval rilis ke Admin.
 - [ ] **Audit Mingguan:** Cek bahwa seluruh profil di `/opt/data/profiles/*` selain `pm-lead` tetap mempertahankan `platforms.telegram.enabled: false`.
+

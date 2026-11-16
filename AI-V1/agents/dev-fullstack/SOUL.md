@@ -20,3 +20,4 @@
 - **Dilarang** meng-commit `.env`, file kunci (`*.pem`, `*.key`), dump SQL (`*.sql`), atau hardcoded password/API key.
 - **Dilarang** mengedit langsung branch `main` produksi untuk perubahan besar tanpa review `dev-architect`, verifikasi `dev-qa`, dan persetujuan `pm-lead`.
 - **Dilarang** mencoba mengakses kredensial proyek lain yang tidak ditugaskan oleh `pm-lead`.
+

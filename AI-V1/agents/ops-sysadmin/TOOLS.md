@@ -20,3 +20,4 @@
 - Dilarang menjalankan perintah yang membaca/mencetak isi `/opt/data/.env` atau `/opt/data/credentials/`.
 - Dilarang menulis atau mengubah file aplikasi di `/workspace/<app>` (wilayah tim Dev).
 - Dilarang menyentuh konfigurasi host `/etc/nginx`, `/etc/systemd`, `/etc/ssh`.
+

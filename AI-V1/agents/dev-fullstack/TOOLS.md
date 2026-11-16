@@ -14,3 +14,4 @@
 - Dilarang membaca `/opt/data/.env` atau `/opt/data/credentials/`.
 - Dilarang mengubah file di `/opt/data/profiles/` atau menyentuh `/opt/data/backups/apps` (`:ro`).
 - Dilarang mengubah permission sistem host atau konfigurasi Nginx/systemd.
+

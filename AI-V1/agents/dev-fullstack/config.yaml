@@ -31,3 +31,4 @@ paths:
   data_dir: /opt/data
   workspace_dir: /workspace
   shared_tasks: /opt/data/shared/tasks
+

@@ -22,3 +22,4 @@
   - Mengubah `/opt/data/.env` atau meminta `TELEGRAM_BOT_TOKEN`.
   - Menjalankan polling Telegram sendiri (`platforms.telegram.enabled` wajib `false`).
 - **Eskalasi ke `pm-lead`:** Jika butuh perubahan Nginx virtual host, sertifikat Certbot, systemd `9router.service`, atau `docker system prune` di host, susun *Change Request* (beserta perintah host yang siap dijalankan Admin) dan kirim ke `pm-lead`.
+

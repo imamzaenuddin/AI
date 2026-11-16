@@ -31,3 +31,4 @@ paths:
   data_dir: /opt/data
   reports_dir: /opt/data/shared/reports
   ssh_dir: /home/hermes/.ssh
+

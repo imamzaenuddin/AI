@@ -16,6 +16,7 @@ Dokumen ini menjadi panduan tugas awal (*bootstrap*), tugas operasional rutin, d
 | `BOOT-04` | Uji akses DB non-root MySQL, verifikasi mount `/opt/data/backups/apps` berstatus read-only (`:ro`), dan cek skrip backup host | `ops-backup-dba` | `BOOT-02` | Query `SELECT 1` sukses dengan user non-root; tulis ke `/opt/data/backups/apps` gagal (`Read-only file system`) | `[ ]` |
 | `BOOT-05` | Audit keamanan awal: cek `Running as ROOT`, cek secret bocor di `/workspace`, validasi `dashboard.basic_auth` & SSL domain `hermes.<DOMAIN>` | `ops-secops` | `BOOT-01` | Laporan audit keamanan nol temuan kritikal | `[ ]` |
 | `BOOT-06` | Pindai seluruh proyek eksisting di `/workspace/` (status Git, stack teknologi, ketersediaan `.env.example` & test suite) | `dev-architect` | `BOOT-01` | Peta arsitektur aplikasi `/workspace` terdokumentasi di `/opt/data/shared/reports/workspace-map.md` | `[ ]` |
+| `BOOT-07` | Verifikasi slot plugin `office-3d` terpasang di `/opt/data/desktop-plugins/office-3d` (`hermes plugins install office-3d`) dan seluruh 7 profil agent tampil tanpa duplikasi plugin auth di `profiles/*/config.yaml` | `pm-lead` | `BOOT-01` | Plugin `office-3d` aktif di launch scope utama & dashboard merespons normal | `[ ]` |
 
 ---
 
@@ -52,3 +53,4 @@ Dokumen ini menjadi panduan tugas awal (*bootstrap*), tugas operasional rutin, d
    - Migrasi skema DB produksi atau perubahan data massal.
    - Rilis ke domain produksi yang melayani user publik.
    - Rotasi atau pencabutan kredensial master (`TELEGRAM_BOT_TOKEN`, `NINEROUTER_API_KEY`, password DB).
+

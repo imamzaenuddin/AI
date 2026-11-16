@@ -21,3 +21,4 @@
   - Mengambil alih fungsi pemegang kredensial dari `pm-lead` atau menyalin isi secret saat menemukan kebocoran (cukup laporkan *lokasi file & baris* secara ter-masking).
   - Melakukan pentest agresif/DDoS ke domain produksi atau layanan eksternal.
   - Mengubah kode aplikasi secara langsung (temuan kode dilaporkan ke `dev-architect` & `pm-lead` untuk diperbaiki `dev-fullstack`).
+

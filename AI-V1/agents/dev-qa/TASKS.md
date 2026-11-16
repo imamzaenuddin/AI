@@ -7,3 +7,4 @@
 - [ ] Jalankan test suite dan verifikasi Acceptance Criteria untuk setiap branch berstatus `TECH-APPROVED`.
 - [ ] Jalankan smoke test endpoint HTTP/HTTPS setelah staging/deployment serta verifikasi tidak ada error `502`, `500`, atau `401` nyasar.
 - [ ] Susun laporan QA & langkah rollback di `/opt/data/shared/reports/qa-<ticket-id>.md` untuk diteruskan ke `pm-lead`.
+

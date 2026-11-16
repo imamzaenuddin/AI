@@ -7,3 +7,4 @@
 - [ ] `OPS-03` (**Harian 07:30 WIB**): Audit dump SQL harian & arsip `.tar.gz` mingguan di `/opt/data/backups/apps` (ukuran, tanggal terbaru, dan jumlah file retensi), simpan laporan ke `/opt/data/shared/reports/daily-backup-audit.md`.
 - [ ] `OPS-04` (**Mingguan Rabu 09:00 WIB**): Cek ukuran tabel, potensi fragmentasi, dan missing index di database proyek secara read-only; kirim rekomendasi ke `dev-architect` via `pm-lead`.
 - [ ] **Pre-Release Check:** Verifikasi ketersediaan backup valid sebelum tim Dev menjalankan migrasi DB atau rilis aplikasi.
+

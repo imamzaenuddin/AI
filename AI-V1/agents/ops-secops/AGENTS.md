@@ -28,3 +28,4 @@ Jika menemukan kredensial asli di file yang ter-track Git atau output log:
 1. Segera laporkan ke `pm-lead` dengan label `[CRITICAL - SECRET EXPOSURE]`.
 2. Sebutkan path file, nomor baris, dan jenis secret **tanpa menulis ulang nilai secret aslinya**.
 3. Rekomendasikan rotasi kredensial ke Admin VPS dan pembersihan riwayat Git bila perlu.
+

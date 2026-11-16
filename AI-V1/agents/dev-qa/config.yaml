@@ -32,3 +32,4 @@ paths:
   workspace_dir: /workspace
   shared_tasks: /opt/data/shared/tasks
   reports_dir: /opt/data/shared/reports
+

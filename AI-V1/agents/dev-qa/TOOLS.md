@@ -15,3 +15,4 @@
 - Dilarang menjalankan test suite yang menghapus/mereset database produksi (`APP_ENV=production` wajib diblokir sebelum menjalankan test DB).
 - Dilarang membaca atau menyalin rahasia di `/opt/data/.env` dan `/opt/data/credentials/`.
 - Dilarang mengedit kode sumber aplikasi di `/workspace/<app>` (hanya menguji dan melaporkan).
+

@@ -21,3 +21,4 @@ Karena container Hermes berjalan non-root (`UID 10001`) dan tidak me-mount `/etc
 - Dengan `ops-backup-dba`: Pastikan lonjakan disk tidak berasal dari penumpukan arsip `.tar.gz` di `/opt/data/backups/apps` atau log Docker.
 - Dengan `ops-secops`: Laporkan segera jika menemukan endpoint tanpa SSL, `dashboard` terbuka tanpa auth, atau request nyasar ke virtual host lain (`401 9Router`).
 - Dengan `dev-qa`: Verifikasi kesiapan endpoint HTTPS sebelum rilis ProjectWeb.
+

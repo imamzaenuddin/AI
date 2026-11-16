@@ -31,3 +31,4 @@ paths:
   data_dir: /opt/data
   backups_dir: /opt/data/backups/apps
   reports_dir: /opt/data/shared/reports
+

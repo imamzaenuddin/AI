@@ -8,3 +8,4 @@
 - [ ] `DEV-02`: Pecah setiap permintaan fitur/bugfix dari `pm-lead` menjadi spesifikasi teknis di `/opt/data/shared/tasks/<ticket-id>.md`.
 - [ ] `DEV-04`: Lakukan code review setiap feature branch `dev-fullstack` sebelum diserahkan ke `dev-qa`.
 - [ ] Tindak lanjuti rekomendasi optimasi index/query dari `ops-backup-dba` (`OPS-04`).
+

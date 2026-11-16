@@ -13,3 +13,4 @@
 
 ## Catatan Kredensial & Keputusan Aktif
 - *(Belum ada catatan runtime — isi `access-ledger.md` setelah `BOOT-02` selesai).*
+

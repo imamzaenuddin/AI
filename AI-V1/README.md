@@ -42,7 +42,7 @@ flowchart LR
 | Path di Host | Pemilik (`UID:GID`) | Fungsi | Akses Container Hermes |
 | :--- | :--- | :--- | :--- |
 | `/opt/hermes/docker-compose.yml` | `root:root` (`644`) | Definisi stack Docker Hermes | Tidak di-mount |
-| `/opt/hermes/data` | `10001:10001` (`hermes`) | Data runtime Hermes (`config.yaml`, `.env`, `profiles/`, `cron/`, `skills/`, `state.db`, `scripts/`) | `/opt/data` (`rw`) |
+| `/opt/hermes/data` | `10001:10001` (`hermes`) | Data runtime Hermes (`config.yaml`, `.env`, `profiles/`, `desktop-plugins/`, `cron/`, `skills/`, `state.db`, `scripts/`) | `/opt/data` (`rw`) |
 | `/opt/hermes/ssh` | `10001:10001` (`700`/`600`) | SSH key khusus monitoring server eksternal | `/home/hermes/.ssh` (`ro`) |
 | `/home/project` | `www-data` / `dev` / grup bersama | Source code aplikasi web buatan tim agent | `/workspace` (`rw`) |
 | `/var/backups/apps` | `root:root` | Dump SQL harian & arsip mingguan aplikasi | `/opt/data/backups/apps` (`ro`) |
@@ -174,6 +174,18 @@ services:
 1. **Path di Skrip & Cron:** Semua path di `/opt/hermes/data/scripts/` dan `/opt/hermes/data/cron/jobs.json` harus memakai `/opt/data/...` dan `/workspace/...` (hindari hardcode `/root/.hermes`).
 2. **Keamanan Dashboard:** Karena `dashboard.public_url: https://hermes.<DOMAIN>` disetel untuk akses publik via reverse proxy, **`dashboard.basic_auth` (username & password hash kuat) wajib aktif**. Jangan pernah membuka dashboard tanpa autentikasi.
 3. **Log Rotation & Kebersihan Profil:** Pastikan tidak ada definisi plugin auth duplikat di folder `profiles/*/config.yaml` yang bertabrakan dengan launch scope utama.
+
+### Slot Plugin Opsional: Office 3D (`hermes plugins install office-3d`)
+Jika ingin menampilkan visualisasi kantor 3D (*real-time* status aktif/idle, penggunaan token, dan inspeksi meja per profil agent `pm-lead`, `ops-*`, `dev-*`) di Hermes Dashboard / Desktop:
+1. **Lokasi Slot Plugin:** `/opt/hermes/data/desktop-plugins/office-3d` (di dalam container: `/opt/data/desktop-plugins/office-3d`, kepemilikan `10001:10001`).
+2. **Cara Instalasi Aman (Non-Root di Launch Scope Utama):**
+   ```bash
+   sudo mkdir -p /opt/hermes/data/desktop-plugins
+   sudo chown -R 10001:10001 /opt/hermes/data/desktop-plugins
+   docker compose -f /opt/hermes/docker-compose.yml exec hermes-dashboard hermes plugins install office-3d
+   docker compose -f /opt/hermes/docker-compose.yml restart hermes-dashboard
+   ```
+3. **Aturan Isolasi:** Instal `office-3d` hanya di *launch scope* utama (`/opt/data/desktop-plugins/`). Jangan menduplikasi blok plugin auth di masing-masing `profiles/*/config.yaml`.
 
 ---
 

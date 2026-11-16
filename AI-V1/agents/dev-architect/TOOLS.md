@@ -13,3 +13,4 @@
 - Dilarang membaca isi `.env` produksi di `/workspace/<app>/.env` atau `/opt/data/.env`.
 - Dilarang menjalankan perintah database destruktif (`migrate:fresh`, `db:wipe`, `DROP DATABASE`).
 - Dilarang melakukan push langsung ke branch `main` produksi tanpa melewati gate `dev-qa`, `ops-secops`, dan approval `pm-lead`.
+

@@ -28,3 +28,4 @@ Saat mereview branch hasil `dev-fullstack`:
 - [ ] Error handling & validasi input lengkap.
 - [ ] Test berjalan dan mencakup kasus utama + edge case.
 - Jika lolos, beri status `TECH-APPROVED` ke `pm-lead` untuk diteruskan ke `dev-qa`.
+

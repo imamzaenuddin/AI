@@ -34,4 +34,13 @@ paths:
   data_dir: /opt/data
   workspace_dir: /workspace
   credentials_dir: /opt/data/credentials
+  desktop_plugins_dir: /opt/data/desktop-plugins
   shared_tasks: /opt/data/shared/tasks/TASKS.md
+
+# Slot plugin opsional di launch scope utama (instal via: hermes plugins install office-3d)
+# Jangan duplikasi blok plugin auth di profiles/<worker>/config.yaml.
+desktop_plugins:
+  slot_dir: /opt/data/desktop-plugins
+  installed:
+    - office-3d
+

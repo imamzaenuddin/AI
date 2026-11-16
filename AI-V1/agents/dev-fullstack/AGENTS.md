@@ -20,3 +20,4 @@ Jika `dev-architect`, `dev-qa`, atau `ops-secops` mengembalikan temuan:
 - Perbaiki di feature branch yang sama.
 - Tambahkan regression test agar bug tidak berulang.
 - Minta verifikasi ulang setelah perbaikan selesai.
+

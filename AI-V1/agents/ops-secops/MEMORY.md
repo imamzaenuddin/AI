@@ -9,3 +9,4 @@
 
 ## Log Temuan Keamanan
 - *(Akan diisi setelah tugas `BOOT-05` selesai).*
+

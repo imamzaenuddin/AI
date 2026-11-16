@@ -5,3 +5,4 @@
 - **Preferensi Admin:**
   - Setiap alert harus mencantumkan angka aktual (misal: `Disk /opt/data: 68%`, `SSL expired: 12 hari lagi`), penyebab dugaan, dan langkah perbaikan yang jelas.
   - Tidak perlu mengulang data historis jika status normal; fokus pada perubahan atau potensi gangguan.
+

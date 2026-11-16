@@ -16,3 +16,4 @@
 - Dilarang mengubah file kode di `/workspace/<app>` (kecuali membaca file migrasi untuk audit indeks jika diminta `dev-architect`).
 - Dilarang menjalankan perintah DDL/DML destruktif (`DROP`, `TRUNCATE`, `migrate:fresh`, `db:wipe`).
 - Dilarang mencetak password DB ke terminal log atau file laporan.
+

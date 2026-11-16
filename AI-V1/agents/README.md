@@ -78,16 +78,29 @@ sudo chown 10001:10001 /opt/hermes/data/.env
 # Edit /opt/hermes/data/.env dan isi seluruh token/password asli
 ```
 
-### Langkah 3 — Siapkan Direktori Kerja & Task Board Runtime
+### Langkah 3 — Siapkan Direktori Kerja, Task Board, & Slot Plugin `office-3d`
 ```bash
-sudo mkdir -p /opt/hermes/data/shared/tasks /opt/hermes/data/shared/reports /opt/hermes/data/credentials
+sudo mkdir -p /opt/hermes/data/shared/tasks /opt/hermes/data/shared/reports /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins
 sudo cp AI-V1/agents/TASKS.md /opt/hermes/data/shared/tasks/TASKS.md
 sudo cp AI-V1/agents/CREDENTIALS_POLICY.md /opt/hermes/data/credentials/CREDENTIALS_POLICY.md
-sudo chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/credentials
+sudo chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins
 sudo chmod 700 /opt/hermes/data/credentials
 ```
 
-### Langkah 4 — Verifikasi Gateway & Mulai Operasi Otonom
+### Langkah 4 — Instal Plugin `office-3d` (Slot Virtual Office Tim Agent)
+Plugin `office-3d` menampilkan kantor virtual 3D secara *real-time* di Hermes Dashboard/Desktop, di mana setiap profil agent (`pm-lead`, `ops-*`, `dev-*`) otomatis muncul sebagai meja kerja (*desk*) untuk memantau status aktif/idle, token, dan output terbaru.
+
+```bash
+# Jalankan di container hermes-dashboard (non-root UID 10001, launch scope utama)
+docker compose -f /opt/hermes/docker-compose.yml exec hermes-dashboard hermes plugins install office-3d
+docker compose -f /opt/hermes/docker-compose.yml restart hermes-dashboard
+```
+
+> **Aturan Slot `office-3d`:**
+> - Lokasi instalasi resmi: `/opt/hermes/data/desktop-plugins/office-3d` (container: `/opt/data/desktop-plugins/office-3d`).
+> - Instal hanya di *launch scope* utama — **jangan** menambahkan definisi plugin auth duplikat di `profiles/*/config.yaml`.
+
+### Langkah 5 — Verifikasi Gateway & Mulai Operasi Otonom
 1. Pastikan `docker compose -f /opt/hermes/docker-compose.yml up -d` berjalan sehat (`hermes-gateway` & `hermes-dashboard` berstatus `Up (healthy)`).
 2. Pastikan hanya `pm-lead` / gateway utama yang membaca `TELEGRAM_BOT_TOKEN`.
 3. Kirim perintah awal ke bot Telegram (yang ditangani `pm-lead`):
@@ -105,3 +118,4 @@ Setiap folder agent memiliki kelengkapan dokumen yang sama agar konsisten dan mu
 - `MEMORY.md` — Memori awal berbasis fakta infrastruktur AI-V1 dan ruang catatan jangka panjang.
 - `TASKS.md` — Daftar tugas rutin (cron/periodik) dan tugas operasional/proyek spesifik agent.
 - `config.yaml` — Konfigurasi profil Hermes (`custom-http` ke `9Router` dengan `key_env: NINEROUTER_API_KEY`, aturan Telegram non-konflik, dan path `/opt/data`).
+

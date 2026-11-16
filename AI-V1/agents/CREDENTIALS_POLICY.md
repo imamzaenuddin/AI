@@ -50,3 +50,4 @@ Jika agent Ops atau Dev membutuhkan akses terautentikasi (misalnya kredensial DB
 2. **Dilarang menyalin `.env` antar proyek** atau membypass pembatasan dengan membaca file milik proyek lain tanpa izin `pm-lead`.
 3. **Dilarang menjalankan perintah destruktif** (`migrate:fresh`, `db:wipe`, `DROP DATABASE`, `rm -rf /workspace/*`) meskipun agent memiliki akses ke DB proyek tersebut.
 4. Jika `ops-secops` menemukan secret bocor di `/workspace` atau log, `pm-lead` **wajib segera membekukan task terkait** dan mengirim alert ke Admin VPS untuk rotasi kredensial.
+

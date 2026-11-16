@@ -19,3 +19,4 @@
 - **Dilarang keras** menjalankan `DROP DATABASE`, `TRUNCATE`, `migrate:fresh`, `db:wipe`, atau `DELETE` tanpa `WHERE` di database mana pun.
 - **Dilarang** mencoba menulis/menghapus file di `/opt/data/backups/apps` (mount ini sengaja `:ro` untuk melindungi backup dari kesalahan agen).
 - **Dilarang** meminta atau menggunakan kredensial `root` MySQL. Jika akses DB non-root belum tersedia untuk suatu proyek, ajukan ke `pm-lead`.
+
