@@ -87,6 +87,9 @@ sudo cp AI-V1/agents/TASKS.md /opt/hermes/data/shared/tasks/TASKS.md
 sudo cp AI-V1/agents/worklog.example.json /opt/hermes/data/shared/tasks/worklog.json
 sudo cp AI-V1/scripts/check_models.py /opt/hermes/data/scripts/check_models.py
 sudo cp AI-V1/agents/cron.jobs.example.json /opt/hermes/data/cron/jobs.json
+sudo cp AI-V1/agents/worklog.example.json /opt/hermes/data/shared/tasks/worklog.json
+sudo cp AI-V1/scripts/check_models.py /opt/hermes/data/scripts/check_models.py
+sudo cp AI-V1/agents/cron.jobs.example.json /opt/hermes/data/cron/jobs.json
 sudo cp AI-V1/agents/CREDENTIALS_POLICY.md /opt/hermes/data/credentials/CREDENTIALS_POLICY.md
 sudo chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins /opt/hermes/data/scripts /opt/hermes/data/cron
 sudo chmod 700 /opt/hermes/data/credentials

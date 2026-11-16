@@ -31,3 +31,4 @@ paths:
   data_dir: /opt/data
   scripts_dir: /opt/data/scripts
   reports_dir: /opt/data/shared/reports
+

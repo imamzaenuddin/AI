@@ -318,3 +318,4 @@ for dom in "${CERTBOT_DOMAINS[@]}"; do
 done
 echo
 echo "Selesai! Manifest tercatat di: ${MANIFEST_TARGET}"
+

@@ -24,3 +24,4 @@
   - Menghapus atau mengosongkan `key_env: NINEROUTER_API_KEY` di `config.yaml` (karena memicu error `custom-http has no resolvable api_key` / `401`).
   - Mengubah `platforms.telegram.enabled` pada profil mana pun (wajib tetap `false` untuk semua worker, `true` hanya untuk `pm-lead`).
   - Mendaftar akun provider baru atau menyimpan API key mentah (jika butuh API key provider baru untuk model gratis, ajukan ke `pm-lead` & Admin VPS).
+

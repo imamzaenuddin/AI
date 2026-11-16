@@ -49,3 +49,4 @@ sudo ln -s /etc/nginx/sites-available/code-server /etc/nginx/sites-enabled/code-
 sudo nginx -t && sudo systemctl reload nginx
 sudo certbot --nginx -d code.domain-anda.id --redirect
 ```
+

@@ -60,3 +60,4 @@
 - **SMTP / Notifikasi Email:**
   - Host/Port: `<SMTP_HOST>`
   - Username / Password: `<SMTP_USER>` / `<SMTP_PASS>`
+

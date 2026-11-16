@@ -18,3 +18,4 @@
 - Dilarang membaca atau menyalin `/opt/data/.env` dan `/opt/data/credentials/pm-vault.enc`.
 - Dilarang mengubah `platforms.telegram.enabled` atau menghapus `key_env: NINEROUTER_API_KEY`.
 - Dilarang mengubah source code aplikasi di `/workspace/<app>` atau menyentuh `/opt/data/backups/apps`.
+

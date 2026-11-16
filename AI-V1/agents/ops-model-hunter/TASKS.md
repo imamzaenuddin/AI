@@ -6,3 +6,4 @@
 ## 2. Tugas Rutin CRON
 - [ ] `OPS-06` (**CRON Setiap 2 Jam**): Cek status aktif & kuota `model.default` seluruh agent (`pm-lead`, `ops-*`, `dev-*`) lewat `9Router`. Jika ada yang habis/error, lakukan *auto-switch* ke model aktif pengganti dan lapor ke `pm-lead`.
 - [ ] `OPS-07` (**CRON Setiap 6 Jam**): Cari & verifikasi model gratisan terbaru (`--discover-free`), perbarui katalog di `/opt/data/shared/reports/free-models-catalog.md`, dan rekomendasikan kandidat terbaik ke `pm-lead`.
+
