@@ -61,23 +61,24 @@ print_status() {
 
   echo -e "\n[5] STATUS MODEL AI (CRON) & WORKLOG"
   if [[ -f /opt/hermes/data/shared/reports/model-health.json ]]; then
-    python3 -c '
+    python3 - <<'PY' 2>/dev/null || echo "  (gagal parse model-health.json)"
 import json
 d = json.load(open("/opt/hermes/data/shared/reports/model-health.json"))
-print(f"  Model Check ({d.get(\"checked_at\",\"-\")}): 9Router={\"OK\" if d.get(\"ninerouter_reachable\") else \"ERR\"} | Fallback={d.get(\"working_fallback\") or \"-\"}")
+gw = "OK" if d.get("ninerouter_reachable") else "ERR"
+print(f"  Model Check ({d.get('checked_at','-')}): 9Router={gw} | Fallback={d.get('working_fallback') or '-'}")
 for a in d.get("agents", []):
-    print(f"    - {a[\"agent\"]:18s} -> {str(a.get(\"model\")):32s} [{a.get(\"status\")}]")
-' 2>/dev/null || echo "  (gagal parse model-health.json)"
+    print(f"    - {a['agent']:18s} -> {str(a.get('model')):32s} [{a.get('status')}]")
+PY
   else
     echo "  (belum ada laporan model-health.json)"
   fi
 
   if [[ -f /opt/hermes/data/shared/tasks/worklog.json ]]; then
-    python3 -c '
+    python3 - <<'PY' 2>/dev/null || true
 import json
 w = json.load(open("/opt/hermes/data/shared/tasks/worklog.json"))
-print(f"  Worklog Update   : {w.get(\"updated_at\",\"-\")} | Sedang Dikerjakan: {len(w.get(\"active_work\",[]))} | Selesai: {len(w.get(\"completed_work\",[]))}")
-' 2>/dev/null || true
+print(f"  Worklog Update   : {w.get('updated_at','-')} | Sedang Dikerjakan: {len(w.get('active_work',[]))} | Selesai: {len(w.get('completed_work',[]))}")
+PY
   fi
 
   echo -e "\n[6] ENDPOINT HTTP/HTTPS"
@@ -106,3 +107,4 @@ if [[ "${WATCH_MODE}" == "true" ]]; then
 else
   print_status
 fi
+
