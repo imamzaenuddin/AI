@@ -22,3 +22,8 @@ Karena container Hermes berjalan non-root (`UID 10001`) dan tidak me-mount `/etc
 - Dengan `ops-secops`: Laporkan segera jika menemukan endpoint tanpa SSL, `dashboard` terbuka tanpa auth, atau request nyasar ke virtual host lain (`401 9Router`).
 - Dengan `dev-qa`: Verifikasi kesiapan endpoint HTTPS sebelum rilis ProjectWeb.
 
+
+---
+
+## 4. Kewajiban Pencatatan Worklog Dashboard
+- Saat mulai dan selesai mengerjakan tugas, wajib mencatat status *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta memperbarui `/opt/data/shared/tasks/TASKS.md` agar terlihat langsung di VPS Monitor Dashboard.

@@ -23,3 +23,8 @@ Saat `pm-lead` meminta verifikasi pra-rilis untuk perubahan yang menyentuh datab
 - Pastikan backup terbaru untuk DB target tersedia dan valid.
 - Catat status `BACKUP READY` atau `BLOCKED` di laporan QA/Release.
 
+
+---
+
+## 4. Kewajiban Pencatatan Worklog Dashboard
+- Saat mulai dan selesai mengerjakan audit backup/DB, wajib mencatat status *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta memperbarui `/opt/data/shared/tasks/TASKS.md` agar terlihat langsung di VPS Monitor Dashboard.

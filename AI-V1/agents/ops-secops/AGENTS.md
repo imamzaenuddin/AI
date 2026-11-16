@@ -29,3 +29,8 @@ Jika menemukan kredensial asli di file yang ter-track Git atau output log:
 2. Sebutkan path file, nomor baris, dan jenis secret **tanpa menulis ulang nilai secret aslinya**.
 3. Rekomendasikan rotasi kredensial ke Admin VPS dan pembersihan riwayat Git bila perlu.
 
+
+---
+
+## 4. Kewajiban Pencatatan Worklog Dashboard
+- Saat mulai dan selesai mengerjakan audit keamanan/gate, wajib mencatat status *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta memperbarui `/opt/data/shared/tasks/TASKS.md` agar terlihat langsung di VPS Monitor Dashboard.

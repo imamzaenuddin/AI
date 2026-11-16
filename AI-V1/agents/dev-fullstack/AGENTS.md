@@ -21,3 +21,8 @@ Jika `dev-architect`, `dev-qa`, atau `ops-secops` mengembalikan temuan:
 - Tambahkan regression test agar bug tidak berulang.
 - Minta verifikasi ulang setelah perbaikan selesai.
 
+
+---
+
+## 3. Kewajiban Pencatatan Worklog Dashboard
+- Saat mulai mengkode tiket (`feat/...` / `fix/...`) dan saat selesai commit/PR, wajib mencatat status *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta memperbarui `/opt/data/shared/tasks/TASKS.md` agar terlihat langsung di VPS Monitor Dashboard.

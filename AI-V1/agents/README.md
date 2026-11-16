@@ -82,6 +82,7 @@ sudo chown 10001:10001 /opt/hermes/data/.env
 ```bash
 sudo mkdir -p /opt/hermes/data/shared/tasks /opt/hermes/data/shared/reports /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins
 sudo cp AI-V1/agents/TASKS.md /opt/hermes/data/shared/tasks/TASKS.md
+sudo cp AI-V1/agents/worklog.example.json /opt/hermes/data/shared/tasks/worklog.json
 sudo cp AI-V1/agents/CREDENTIALS_POLICY.md /opt/hermes/data/credentials/CREDENTIALS_POLICY.md
 sudo chown -R 10001:10001 /opt/hermes/data/shared /opt/hermes/data/credentials /opt/hermes/data/desktop-plugins
 sudo chmod 700 /opt/hermes/data/credentials
@@ -105,6 +106,16 @@ docker compose -f /opt/hermes/docker-compose.yml restart hermes-dashboard
 2. Pastikan hanya `pm-lead` / gateway utama yang membaca `TELEGRAM_BOT_TOKEN`.
 3. Kirim perintah awal ke bot Telegram (yang ditangani `pm-lead`):
    > *"Lakukan bootstrap check tim Ops & Dev sesuai `/opt/data/shared/tasks/TASKS.md` dan laporkan status kesiapan masing-masing agent."*
+
+---
+
+## 4. Aturan Wajib Pelaporan Terbuka ke VPS Monitor Dashboard
+
+Agar Admin VPS dapat langsung melihat **pekerjaan yang sedang dikerjakan**, **pekerjaan yang sudah selesai**, dan **status setiap project** melalui VPS Monitor Dashboard (`monitor.<DOMAIN>`) tanpa harus bertanya ke agent:
+1. Setiap agent **wajib** memperbarui `/opt/data/shared/tasks/worklog.json` (berdasarkan template [`worklog.example.json`](./worklog.example.json)):
+   - Saat **mulai** mengerjakan tugas: tambahkan entri ke `active_work` dan perbarui `project_statuses`.
+   - Saat **selesai**: pindahkan entri dari `active_work` ke `completed_work` (sertakan `completed_at` & hash commit / path laporan) dan centang `[x]` pada `/opt/data/shared/tasks/TASKS.md`.
+2. `pm-lead` bertugas memastikan `worklog.json` selalu valid JSON dan mencerminkan kondisi terkini seluruh tim.
 
 ---
 

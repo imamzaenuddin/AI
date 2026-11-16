@@ -1,0 +1,23 @@
+{
+  "updated_at": "2026-11-16T12:00:00+07:00",
+  "project_statuses": [
+    {
+      "project": "ai-v1-infra",
+      "status": "In Progress",
+      "progress_pct": 0,
+      "pic_agent": "pm-lead",
+      "note": "Menunggu verifikasi bootstrap awal tim Ops & Dev (BOOT-01..BOOT-07)"
+    }
+  ],
+  "active_work": [
+    {
+      "ticket_id": "BOOT-01",
+      "project": "ai-v1-infra",
+      "agent": "pm-lead",
+      "task": "Verifikasi profil agent dan zero Telegram conflict",
+      "branch": "-",
+      "started_at": "2026-11-16T12:00:00+07:00"
+    }
+  ],
+  "completed_work": []
+}

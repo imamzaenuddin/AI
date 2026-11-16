@@ -384,8 +384,58 @@ def get_nginx_and_ssl() -> dict[str, Any]:
     return {"vhosts": vhosts, "certs": certs}
 
 
-def get_projects_inventory() -> list[dict[str, Any]]:
-    """Daftar aplikasi ProjectWeb di /home/project tanpa membaca isi .env."""
+def _match_vhost_url(vhosts: list[dict[str, Any]], port: int | None = None, keyword: str | None = None) -> str | None:
+    """Cari URL publik dari virtual host Nginx berdasarkan port proxy_pass atau nama file/domain."""
+    for v in vhosts:
+        targets = " ".join(v.get("targets") or [])
+        names = v.get("server_names") or []
+        if not names:
+            continue
+        matched_port = port is not None and f":{port}" in targets
+        matched_kw = keyword is not None and (keyword in v.get("file", "").lower() or keyword in names[0].lower())
+        if matched_port or matched_kw:
+            scheme = "https" if v.get("ssl_configured") else "http"
+            return f"{scheme}://{names[0]}"
+    return None
+
+
+def get_service_launchers(vhosts: list[dict[str, Any]], endpoints: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Bangun daftar tautan akses cepat ke Hermes, 9Router, Code-Server, dan Office 3D."""
+    ep_map = {e["name"]: e["listening"] for e in endpoints}
+    hermes_url = os.environ.get("HERMES_URL") or _match_vhost_url(vhosts, port=9119, keyword="hermes")
+    router_url = os.environ.get("NINEROUTER_URL") or _match_vhost_url(vhosts, port=20128, keyword="9router")
+    code_url = os.environ.get("CODE_SERVER_URL") or _match_vhost_url(vhosts, port=8443, keyword="code")
+
+    return [
+        {
+            "id": "hermes",
+            "label": "Hermes Dashboard",
+            "subtitle": "Agent Chat, Cron & Office-3D",
+            "url": hermes_url,
+            "local": "http://127.0.0.1:9119",
+            "online": ep_map.get("Hermes Dashboard", False),
+        },
+        {
+            "id": "9router",
+            "label": "9Router AI Gateway",
+            "subtitle": "Model Routing & Quota",
+            "url": router_url,
+            "local": "http://127.0.0.1:20128",
+            "online": ep_map.get("9Router Primary", False),
+        },
+        {
+            "id": "code-server",
+            "label": "Code-Server (VS Code)",
+            "subtitle": "Workspace /home/project",
+            "url": code_url,
+            "local": "http://127.0.0.1:8443",
+            "online": ep_map.get("Code-Server (VS Code Web)", False),
+        },
+    ]
+
+
+def get_projects_inventory(vhosts: list[dict[str, Any]], code_server_url: str | None) -> list[dict[str, Any]]:
+    """Daftar aplikasi ProjectWeb di /home/project, domain terkait, & aktivitas Git terbaru."""
     if not PROJECT_DIR.exists():
         return []
     projects: list[dict[str, Any]] = []
@@ -395,6 +445,7 @@ def get_projects_inventory() -> list[dict[str, Any]]:
         is_git = (entry / ".git").exists()
         branch = None
         dirty = None
+        recent_commits: list[dict[str, str]] = []
         if is_git:
             rc_b, out_b, _ = run_cmd(["git", "-C", str(entry), "rev-parse", "--abbrev-ref", "HEAD"])
             if rc_b == 0:
@@ -402,6 +453,27 @@ def get_projects_inventory() -> list[dict[str, Any]]:
             rc_s, out_s, _ = run_cmd(["git", "-C", str(entry), "status", "--porcelain"])
             if rc_s == 0:
                 dirty = bool(out_s.strip())
+            rc_l, out_l, _ = run_cmd(
+                ["git", "-C", str(entry), "log", "-n", "3", "--date=short", "--pretty=format:%h|%ad|%an|%s"]
+            )
+            if rc_l == 0 and out_l:
+                for row in out_l.splitlines():
+                    parts = row.split("|", 3)
+                    if len(parts) == 4:
+                        recent_commits.append(
+                            {"hash": parts[0], "date": parts[1], "author": parts[2], "message": parts[3]}
+                        )
+
+        web_url = None
+        for v in vhosts:
+            targets_str = " ".join(v.get("targets") or [])
+            names = v.get("server_names") or []
+            if names and (f"/{entry.name}" in targets_str or v.get("file") == entry.name):
+                scheme = "https" if v.get("ssl_configured") else "http"
+                web_url = f"{scheme}://{names[0]}"
+                break
+
+        code_url = f"{code_server_url}/?folder={entry}" if code_server_url else None
         projects.append(
             {
                 "name": entry.name,
@@ -409,12 +481,77 @@ def get_projects_inventory() -> list[dict[str, Any]]:
                 "is_git": is_git,
                 "branch": branch,
                 "dirty": dirty,
+                "recent_commits": recent_commits,
+                "web_url": web_url,
+                "code_url": code_url,
                 "has_env": (entry / ".env").exists(),
                 "has_env_example": (entry / ".env.example").exists(),
                 "has_agents_md": (entry / "AGENTS.md").exists(),
             }
         )
     return projects
+
+
+def _parse_tasks_markdown(tasks_path: Path) -> dict[str, Any]:
+    """Parse ringkasan tugas [ ] dan [x] dari TASKS.md."""
+    if not tasks_path.exists():
+        return {"exists": False, "pending": [], "completed": [], "total": 0}
+    pending: list[dict[str, str]] = []
+    completed: list[dict[str, str]] = []
+    row_re = re.compile(r"^\|\s*`?([^|`]+)`?\s*\|\s*([^|]+)\|\s*`?([^|`]+)`?\s*\|.*\|\s*`?\[( |x|X)\]`?\s*\|")
+    for line in tasks_path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        m = row_re.match(line.strip())
+        if not m:
+            continue
+        item = {
+            "id": m.group(1).strip(),
+            "task": m.group(2).strip(),
+            "pic": m.group(3).strip(),
+            "done": m.group(4).lower() == "x",
+        }
+        if item["done"]:
+            completed.append(item)
+        else:
+            pending.append(item)
+    return {
+        "exists": True,
+        "pending": pending,
+        "completed": completed,
+        "total": len(pending) + len(completed),
+    }
+
+
+def get_work_tracking() -> dict[str, Any]:
+    """Baca catatan wajib pekerjaan agent dari worklog.json dan TASKS.md."""
+    shared_tasks_dir = HERMES_DATA_DIR / "shared" / "tasks"
+    worklog_path = shared_tasks_dir / "worklog.json"
+    tasks_md_path = shared_tasks_dir / "TASKS.md"
+
+    worklog: dict[str, Any] = {
+        "exists": False,
+        "updated_at": None,
+        "project_statuses": [],
+        "active_work": [],
+        "completed_work": [],
+    }
+    if worklog_path.exists():
+        try:
+            raw = json.loads(worklog_path.read_text(encoding="utf-8"))
+            worklog = {
+                "exists": True,
+                "updated_at": raw.get("updated_at"),
+                "project_statuses": raw.get("project_statuses", []),
+                "active_work": raw.get("active_work", []),
+                "completed_work": raw.get("completed_work", []),
+            }
+        except (OSError, json.JSONDecodeError) as exc:
+            worklog["error"] = str(exc)
+
+    return {
+        "worklog_path": str(worklog_path),
+        "worklog": worklog,
+        "tasks_md": _parse_tasks_markdown(tasks_md_path),
+    }
 
 
 def get_backup_inventory() -> dict[str, Any]:
@@ -465,16 +602,24 @@ def get_backup_inventory() -> dict[str, Any]:
 
 def collect_snapshot() -> dict[str, Any]:
     """Kumpulkan seluruh status VPS untuk endpoint /api/status."""
+    endpoints = get_ports_and_endpoints()
+    nginx_ssl = get_nginx_and_ssl()
+    vhosts = nginx_ssl.get("vhosts", [])
+    launchers = get_service_launchers(vhosts, endpoints)
+    code_url = next((l["url"] for l in launchers if l["id"] == "code-server"), None)
+
     return {
         "generated_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
         "system": get_system_metrics(),
+        "launchers": launchers,
         "software": get_installed_software(),
         "services": get_systemd_services(),
         "docker": get_docker_containers(),
         "hermes": get_hermes_status(),
-        "endpoints": get_ports_and_endpoints(),
-        "nginx_ssl": get_nginx_and_ssl(),
-        "projects": get_projects_inventory(),
+        "endpoints": endpoints,
+        "nginx_ssl": nginx_ssl,
+        "projects": get_projects_inventory(vhosts, code_url),
+        "work_tracking": get_work_tracking(),
         "backups": get_backup_inventory(),
     }
 

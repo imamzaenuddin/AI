@@ -19,3 +19,8 @@
   2. Pastikan `ops-backup-dba` mengonfirmasi `BACKUP READY` (khusus tiket yang menyentuh DB/produksi).
   3. Serahkan paket laporan `QA-PASS` + rencana rollback ke `pm-lead` untuk dimintakan approval rilis ke Admin VPS.
 
+
+---
+
+## 3. Kewajiban Pencatatan Worklog Dashboard
+- Saat mulai pengujian dan setelah hasil QA (`PASS`/`FAIL`) keluar, wajib mencatat status *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta memperbarui `/opt/data/shared/tasks/TASKS.md` agar terlihat langsung di VPS Monitor Dashboard.

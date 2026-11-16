@@ -3,6 +3,7 @@
 Dokumen ini menjadi panduan tugas awal (*bootstrap*), tugas operasional rutin, dan pipeline kerja pengembangan yang langsung dieksekusi tim agent setelah setup di VPS selesai.
 
 > **Koordinator Utama:** `pm-lead` (`00-pm-coordinator`) bertanggung jawab memecah tugas, memantau status, menjaga batas kredensial, dan melaporkan ringkasan ke Admin VPS melalui Telegram/Dashboard.
+> **Kewajiban Worklog Dashboard:** Setiap agent **wajib** mencatat pekerjaan yang *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta mengubah `[ ]` menjadi `[x]` di file ini agar langsung terlihat di VPS Monitor Dashboard.
 
 ---
 

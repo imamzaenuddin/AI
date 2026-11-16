@@ -149,6 +149,21 @@
     <!-- KPI Ringkas -->
     <section class="grid-4" id="kpiSection"></section>
 
+    <!-- Launcher Layanan Inti AI-V1 (Hermes, 9Router, Code-Server) -->
+    <section class="grid-4" id="launchersSection"></section>
+
+    <!-- Tracking Pekerjaan Agent & Status Project (Tanpa Chat Agent) -->
+    <section class="grid-2">
+      <div class="card">
+        <h2>Pekerjaan Sedang Dikerjakan &amp; Status Project</h2>
+        <div id="activeWorkPanel"></div>
+      </div>
+      <div class="card">
+        <h2>Pekerjaan Sudah Dikerjakan (Worklog &amp; TASKS.md)</h2>
+        <div id="completedWorkPanel"></div>
+      </div>
+    </section>
+
     <!-- Akses Cepat Subdomain & Port -->
     <section class="grid-2">
       <div class="card">
@@ -267,6 +282,119 @@ sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/app
           <div class="kpi-sub">Profil Agent: ${installedProfiles} / ${profiles.length} terpasang</div>
           <div class="kpi-sub">Plugin Office-3D: ${data.hermes?.office_3d_installed ? pill('Terpasang', 'ok') : pill('Belum', 'warn')}</div>
         </div>
+      `;
+    }
+
+    function renderLaunchers(data) {
+      const list = data.launchers || [];
+      document.getElementById('launchersSection').innerHTML = list.map(item => `
+        <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <strong>${esc(item.label)}</strong>
+              ${item.online ? pill('ONLINE', 'ok') : pill('OFFLINE', 'bad')}
+            </div>
+            <div class="kpi-sub" style="margin-top:4px;">${esc(item.subtitle)}</div>
+            <div class="kpi-sub">Bind: <code>${esc(item.local)}</code></div>
+          </div>
+          <div>
+            ${item.url
+              ? `<a class="chip-link" style="width:100%;justify-content:center;border-color:var(--blue);" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Buka ${esc(item.label)} ↗</a>`
+              : `<span class="kpi-sub">Subdomain Nginx belum terpasang (${esc(item.local)})</span>`}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderWorkTracking(data) {
+      const wt = data.work_tracking || {};
+      const wl = wt.worklog || {};
+      const tmd = wt.tasks_md || {};
+      const statuses = wl.project_statuses || [];
+      const active = wl.active_work || [];
+      const completed = wl.completed_work || [];
+
+      const totalMd = tmd.total || 0;
+      const doneMd = (tmd.completed || []).length;
+      const pctMd = totalMd ? Math.round((doneMd / totalMd) * 100) : 0;
+
+      document.getElementById('activeWorkPanel').innerHTML = `
+        <div class="kpi-sub" style="margin-bottom:10px;">
+          Sumber: <code>${esc(wt.worklog_path || '/opt/hermes/data/shared/tasks/worklog.json')}</code>
+          ${wl.updated_at ? ` · Update: ${esc(wl.updated_at)}` : ''}
+        </div>
+        ${statuses.length ? `
+          <table style="margin-bottom:12px;">
+            <thead><tr><th>Project</th><th>Status</th><th>Progress</th><th>PIC</th><th>Catatan</th></tr></thead>
+            <tbody>
+              ${statuses.map(p => {
+                const st = (p.status || '').toLowerCase();
+                const cls = st.includes('done') || st.includes('live') ? 'ok' : (st.includes('block') ? 'bad' : 'warn');
+                return `<tr>
+                  <td><strong>${esc(p.project)}</strong></td>
+                  <td>${pill(p.status || '-', cls)}</td>
+                  <td>${esc(p.progress_pct ?? '-')}%</td>
+                  <td><code>${esc(p.pic_agent || '-')}</code></td>
+                  <td>${esc(p.note || '-')}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>` : ''}
+        ${active.length ? `
+          <table>
+            <thead><tr><th>Sedang Dikerjakan</th><th>Project</th><th>PIC</th><th>Branch</th></tr></thead>
+            <tbody>
+              ${active.map(a => `
+                <tr>
+                  <td>${esc(a.task)}<br/><small class="kpi-sub">${esc(a.ticket_id || '')} ${a.started_at ? '· ' + esc(a.started_at) : ''}</small></td>
+                  <td><strong>${esc(a.project || '-')}</strong></td>
+                  <td><code>${esc(a.agent || '-')}</code></td>
+                  <td><code>${esc(a.branch || '-')}</code></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>` : '<p class="kpi-sub">Belum ada pekerjaan aktif di <code>worklog.json</code>.</p>'}
+        ${(tmd.pending || []).length ? `
+          <div style="margin-top:12px;">
+            <div class="kpi-sub" style="margin-bottom:6px;">Antrian TASKS.md (${(tmd.pending || []).length} tersisa):</div>
+            <table>
+              <tbody>
+                ${(tmd.pending || []).slice(0, 6).map(t => `
+                  <tr><td><code>${esc(t.id)}</code></td><td>${esc(t.task)}</td><td><code>${esc(t.pic)}</code></td></tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>` : ''}
+      `;
+
+      document.getElementById('completedWorkPanel').innerHTML = `
+        <div style="margin-bottom:10px;">
+          <div class="kpi-sub">Progress Master TASKS.md: <strong>${doneMd} / ${totalMd}</strong> (${pctMd}%)</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${pctMd}%;background:var(--green)"></div></div>
+        </div>
+        ${completed.length ? `
+          <table style="margin-bottom:12px;">
+            <thead><tr><th>Sudah Dikerjakan</th><th>Project</th><th>PIC</th><th>Selesai</th></tr></thead>
+            <tbody>
+              ${completed.slice(0, 10).map(c => `
+                <tr>
+                  <td>${esc(c.summary || c.task)}<br/><small class="kpi-sub">${esc(c.ticket_id || '')} ${c.commit_or_report ? '· ' + esc(c.commit_or_report) : ''}</small></td>
+                  <td><strong>${esc(c.project || '-')}</strong></td>
+                  <td><code>${esc(c.agent || '-')}</code></td>
+                  <td>${esc(c.completed_at || '-')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>` : '<p class="kpi-sub">Belum ada catatan selesai di <code>worklog.json</code>.</p>'}
+        ${(tmd.completed || []).length ? `
+          <table>
+            <thead><tr><th>ID TASKS.md</th><th>Selesai</th><th>PIC</th></tr></thead>
+            <tbody>
+              ${(tmd.completed || []).slice(0, 6).map(t => `
+                <tr><td><code>${esc(t.id)}</code></td><td>${esc(t.task)}</td><td><code>${esc(t.pic)}</code></td></tr>
+              `).join('')}
+            </tbody>
+          </table>` : ''}
       `;
     }
 
@@ -402,15 +530,27 @@ sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/app
       const projs = data.projects || [];
       document.getElementById('projectsTable').innerHTML = projs.length ? `
         <table>
-          <thead><tr><th>ProjectWeb</th><th>Git Branch</th><th>Standar</th></tr></thead>
+          <thead><tr><th>ProjectWeb</th><th>Git &amp; Commit Terakhir</th><th>Standar &amp; Akses</th></tr></thead>
           <tbody>
-            ${projs.map(p => `
+            ${projs.map(p => {
+              const latest = (p.recent_commits || [])[0];
+              return `
               <tr>
-                <td><strong>${esc(p.name)}</strong></td>
-                <td>${p.is_git ? pill((p.branch || 'git') + (p.dirty ? ' *' : ''), p.dirty ? 'warn' : 'ok') : pill('Non-Git', 'warn')}</td>
-                <td>${p.has_env ? pill('.env', 'ok') : pill('no .env', 'muted-pill')} ${p.has_agents_md ? pill('AGENTS.md', 'ok') : pill('no AGENTS.md', 'warn')}</td>
-              </tr>
-            `).join('')}
+                <td><strong>${esc(p.name)}</strong><br/><small class="kpi-sub"><code>${esc(p.path)}</code></small></td>
+                <td>
+                  ${p.is_git ? pill((p.branch || 'git') + (p.dirty ? ' *' : ''), p.dirty ? 'warn' : 'ok') : pill('Non-Git', 'warn')}
+                  ${latest ? `<div class="kpi-sub" style="margin-top:4px;"><code>${esc(latest.hash)}</code> ${esc(latest.message)} (${esc(latest.date)})</div>` : ''}
+                </td>
+                <td>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                    ${p.has_env ? pill('.env', 'ok') : pill('no .env', 'muted-pill')}
+                    ${p.has_agents_md ? pill('AGENTS.md', 'ok') : pill('no AGENTS.md', 'warn')}
+                    ${p.web_url ? `<a class="chip-link" style="padding:2px 8px;font-size:0.75rem;" href="${esc(p.web_url)}" target="_blank" rel="noopener noreferrer">Web ↗</a>` : ''}
+                    ${p.code_url ? `<a class="chip-link" style="padding:2px 8px;font-size:0.75rem;" href="${esc(p.code_url)}" target="_blank" rel="noopener noreferrer">Code-Server ↗</a>` : ''}
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
           </tbody>
         </table>` : '<p class="kpi-sub">Belum ada folder aplikasi di /home/project.</p>';
 
@@ -439,6 +579,8 @@ sudo mysqldump --single-transaction --all-databases | gzip &gt; /var/backups/app
         const data = await res.json();
         document.getElementById('metaLine').textContent = `Terakhir diperbarui: ${data.generated_at} · Host: ${data.system?.hostname || '-'}`;
         renderKPIs(data);
+        renderLaunchers(data);
+        renderWorkTracking(data);
         renderVhostsAndPorts(data);
         renderDockerAndHermes(data);
         renderServicesAndSoftware(data);

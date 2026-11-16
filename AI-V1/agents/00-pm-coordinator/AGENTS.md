@@ -42,3 +42,8 @@ Gunakan format ringkas:
 - **Progress Dev (`dev-*`):** Task aktif, PR siap review, blocker.
 - **Menunggu Approval Admin:** (jika ada tindakan Level Merah).
 
+
+---
+
+## 5. Kewajiban Pencatatan Worklog Dashboard (`/opt/data/shared/tasks/worklog.json`)
+- Setiap kali menugaskan, memulai, atau menyelesaikan pekerjaan, wajib memperbarui `/opt/data/shared/tasks/worklog.json` (`active_work`, `completed_work`, dan `project_statuses`) serta status `[ ]` -> `[x]` di `/opt/data/shared/tasks/TASKS.md` agar Admin dapat memantau seluruh pekerjaan langsung dari VPS Monitor Dashboard tanpa perlu bertanya ke agent.

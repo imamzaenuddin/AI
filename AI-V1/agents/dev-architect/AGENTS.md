@@ -29,3 +29,8 @@ Saat mereview branch hasil `dev-fullstack`:
 - [ ] Test berjalan dan mencakup kasus utama + edge case.
 - Jika lolos, beri status `TECH-APPROVED` ke `pm-lead` untuk diteruskan ke `dev-qa`.
 
+
+---
+
+## 4. Kewajiban Pencatatan Worklog Dashboard
+- Saat membuat spesifikasi teknis atau menyelesaikan review PR, wajib mencatat status *Sedang Dikerjakan* (`active_work`) dan *Sudah Dikerjakan* (`completed_work` + `project_statuses`) di `/opt/data/shared/tasks/worklog.json` serta memperbarui `/opt/data/shared/tasks/TASKS.md` agar terlihat langsung di VPS Monitor Dashboard.
